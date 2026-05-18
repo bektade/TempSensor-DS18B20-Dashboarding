@@ -1,6 +1,8 @@
 # Python
 venv/
+.venv/
 __pycache__/
+**/__pycache__/
 *.py[cod]
 .Python
 *.egg-info/
@@ -9,19 +11,32 @@ __pycache__/
 .env
 .env.*
 !.env.example
-grafana/provisioning/datasources/*.local.yml
 
-# Docker / MQTT persistence
-mosquitto/data/
-mosquitto/log/
+# Generated at Grafana container start
+stack/grafana/provisioning/datasources/influxdb.yml
+
+# Data outputs
+exports/
+*.csv
+
+# Optional Grafana UI exports
+TempSensor Live-*.json
+
+# Docker local persistence
+stack/mosquitto/data/
+stack/mosquitto/log/
+telegraf/telegraf.conf
+
+# Compose overrides
+docker-compose.override.yml
 
 # IDE / OS
 .idea/
 .vscode/
 .cursor/
-*.swp
-*~
 .DS_Store
-
-# Logs
 *.log
+
+# Legacy (other branch)
+ETL/
+Doc/
