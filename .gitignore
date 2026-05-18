@@ -2,42 +2,26 @@
 venv/
 __pycache__/
 *.py[cod]
-*$py.class
 .Python
 *.egg-info/
-.eggs/
-dist/
-build/
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
 
-# Environment / secrets
+# Secrets
 .env
 .env.*
 !.env.example
+grafana/provisioning/datasources/*.local.yml
 
-# Grafana / Docker local secrets (do not commit real tokens)
-GrafanaDashboard/.env
-GrafanaDashboard/grafana/provisioning/datasources/*.local.yml
+# Docker / MQTT persistence
+mosquitto/data/
+mosquitto/log/
 
-# Sensor data (generated at runtime)
-ETL/Extract/*.csv
-ETL/Extract/archive/
-ETL/Transform/archive/
-
-# Docker / MQTT local persistence (if created under project tree)
-GrafanaDashboard/mosquitto/data/
-GrafanaDashboard/mosquitto/log/
-
-# IDE / editor
+# IDE / OS
 .idea/
 .vscode/
 .cursor/
 *.swp
 *~
 .DS_Store
-Thumbs.db
 
 # Logs
 *.log
