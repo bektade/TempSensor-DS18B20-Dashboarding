@@ -3,7 +3,10 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -15,75 +18,63 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
+  "id": 7,
   "links": [],
   "panels": [
     {
-      "datasource": { "type": "influxdb", "uid": "influxdb-tempsensor" },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influxdb-tempsensor"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
-          "decimals": 1,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              { "color": "blue", "value": null },
-              { "color": "orange", "value": 40 },
-              { "color": "red", "value": 60 }
-            ]
+          "color": {
+            "mode": "thresholds"
           },
-          "unit": "celsius"
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 4, "w": 12, "x": 0, "y": 0 },
-      "id": 1,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-        "textMode": "value",
-        "wideLayout": false
-      },
-      "pluginVersion": "11.4.0",
-      "targets": [
-        {
-          "query": "from(bucket: \"temperature\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sensor_reading\")\n  |> filter(fn: (r) => r._field == \"temperature_c\")\n  |> filter(fn: (r) => r[\"sensor_label\"] =~ /${sensor:regex}/)\n  |> group(columns: [\"sensor_label\"])\n  |> last()",
-          "refId": "A"
-        }
-      ],
-      "title": "Latest °C",
-      "type": "stat"
-    },
-    {
-      "datasource": { "type": "influxdb", "uid": "influxdb-tempsensor" },
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "thresholds" },
           "decimals": 1,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "blue", "value": null },
-              { "color": "orange", "value": 104 },
-              { "color": "red", "value": 140 }
+              {
+                "color": "blue",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 104
+              },
+              {
+                "color": "red",
+                "value": 140
+              }
             ]
           },
           "unit": "fahrenheit"
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 12, "x": 12, "y": 0 },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 1,
+        "y": 0
+      },
       "id": 2,
       "options": {
         "colorMode": "value",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
         "textMode": "value",
         "wideLayout": false
       },
@@ -98,72 +89,16 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "influxdb", "uid": "influxdb-tempsensor" },
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influxdb-tempsensor"
+      },
       "fieldConfig": {
         "defaults": {
-          "color": { "fixedColor": "dark-red", "mode": "fixed" },
-          "custom": {
-            "axisBorderShow": true,
-            "axisCenteredZero": false,
-            "axisColorMode": "series",
-            "axisGridShow": true,
-            "axisLabel": "Temperature (°C)",
-            "axisPlacement": "left",
-            "drawStyle": "line",
-            "fillOpacity": 40,
-            "gradientMode": "opacity",
-            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
-            "lineInterpolation": "stepAfter",
-            "lineWidth": 2,
-            "pointSize": 4,
-            "showPoints": "always",
-            "spanNulls": true,
-            "stacking": { "group": "A", "mode": "none" },
-            "thresholdsStyle": { "mode": "off" }
+          "color": {
+            "fixedColor": "dark-red",
+            "mode": "fixed"
           },
-          "decimals": 1,
-          "max": 70,
-          "min": 10,
-          "unit": "celsius"
-        },
-        "overrides": [
-          {
-            "matcher": { "id": "byRegexp", "options": "/.*/" },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "${__field.labels.sensor_label}"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": { "h": 13, "w": 24, "x": 0, "y": 4 },
-      "id": 3,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": { "mode": "single", "sort": "none" }
-      },
-      "pluginVersion": "11.4.0",
-      "targets": [
-        {
-          "query": "from(bucket: \"temperature\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sensor_reading\")\n  |> filter(fn: (r) => r._field == \"temperature_c\")\n  |> filter(fn: (r) => r[\"sensor_label\"] =~ /${sensor:regex}/)\n  |> group(columns: [\"sensor_label\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
-          "refId": "A"
-        }
-      ],
-      "title": "Temperature (°C)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": { "type": "influxdb", "uid": "influxdb-tempsensor" },
-      "fieldConfig": {
-        "defaults": {
-          "color": { "fixedColor": "dark-red", "mode": "fixed" },
           "custom": {
             "axisBorderShow": true,
             "axisCenteredZero": false,
@@ -171,26 +106,58 @@
             "axisGridShow": true,
             "axisLabel": "Temperature (°F)",
             "axisPlacement": "left",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 40,
             "gradientMode": "opacity",
-            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
             "lineInterpolation": "stepAfter",
             "lineWidth": 2,
             "pointSize": 4,
+            "scaleDistribution": {
+              "type": "linear"
+            },
             "showPoints": "always",
             "spanNulls": true,
-            "stacking": { "group": "A", "mode": "none" },
-            "thresholdsStyle": { "mode": "off" }
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "decimals": 1,
+          "mappings": [],
           "max": 160,
           "min": 50,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
           "unit": "fahrenheit"
         },
         "overrides": [
           {
-            "matcher": { "id": "byRegexp", "options": "/.*/" },
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/.*/"
+            },
             "properties": [
               {
                 "id": "displayName",
@@ -200,16 +167,30 @@
           }
         ]
       },
-      "gridPos": { "h": 13, "w": 24, "x": 0, "y": 17 },
+      "gridPos": {
+        "h": 13,
+        "w": 21,
+        "x": 3,
+        "y": 0
+      },
       "id": 4,
       "options": {
         "legend": {
-          "calcs": [],
+          "calcs": [
+            "first",
+            "last",
+            "min",
+            "max",
+            "mean"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
         },
-        "tooltip": { "mode": "single", "sort": "none" }
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
       },
       "pluginVersion": "11.4.0",
       "targets": [
@@ -220,16 +201,215 @@
       ],
       "title": "Temperature (°F)",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influxdb-tempsensor"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 40
+              },
+              {
+                "color": "red",
+                "value": 60
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 1,
+        "y": 3
+      },
+      "id": 1,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": false
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"temperature\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sensor_reading\")\n  |> filter(fn: (r) => r._field == \"temperature_c\")\n  |> filter(fn: (r) => r[\"sensor_label\"] =~ /${sensor:regex}/)\n  |> group(columns: [\"sensor_label\"])\n  |> last()",
+          "refId": "A"
+        }
+      ],
+      "title": "Latest °C",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influxdb-tempsensor"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "dark-red",
+            "mode": "fixed"
+          },
+          "custom": {
+            "axisBorderShow": true,
+            "axisCenteredZero": false,
+            "axisColorMode": "series",
+            "axisGridShow": true,
+            "axisLabel": "Temperature (°C)",
+            "axisPlacement": "left",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 40,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "stepAfter",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
+            "pointSize": 4,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 1,
+          "mappings": [],
+          "max": 70,
+          "min": 10,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/.*/"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "${__field.labels.sensor_label}"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 21,
+        "x": 3,
+        "y": 13
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [
+            "first",
+            "last",
+            "min",
+            "max",
+            "mean"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"temperature\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sensor_reading\")\n  |> filter(fn: (r) => r._field == \"temperature_c\")\n  |> filter(fn: (r) => r[\"sensor_label\"] =~ /${sensor:regex}/)\n  |> group(columns: [\"sensor_label\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
+          "refId": "A"
+        }
+      ],
+      "title": "Temperature (°C)",
+      "type": "timeseries"
     }
   ],
+  "preload": false,
   "refresh": "5s",
   "schemaVersion": 40,
-  "tags": ["tempsensor", "mqtt", "ds18b20"],
+  "tags": [
+    "tempsensor",
+    "mqtt",
+    "ds18b20"
+  ],
   "templating": {
     "list": [
       {
-        "current": { "text": "All", "value": "$__all" },
-        "datasource": { "type": "influxdb", "uid": "influxdb-tempsensor" },
+        "current": {
+          "text": [
+            "Sensor1"
+          ],
+          "value": [
+            "Sensor1"
+          ]
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "influxdb-tempsensor"
+        },
         "definition": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"temperature\", tag: \"sensor_label\")",
         "includeAll": true,
         "label": "Sensor",
@@ -245,9 +425,14 @@
       }
     ]
   },
-  "time": { "from": "now-30m", "to": "now" },
-  "timezone": "browser",
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "America/Chicago",
   "title": "TempSensor Live",
   "uid": "tempsensor-live",
-  "version": 3
+  "version": 19,
+  "weekStart": ""
 }

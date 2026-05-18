@@ -68,6 +68,7 @@ services:
     restart: unless-stopped
     env_file: .env
     environment:
+      TZ: ${TZ:-America/Chicago}
       MQTT_HOST: mosquitto
       MQTT_PORT: "1883"
     depends_on:
@@ -95,9 +96,11 @@ services:
       - ./scripts/grafana-entrypoint.sh:/grafana-entrypoint.sh:ro
     entrypoint: ["/bin/sh", "/grafana-entrypoint.sh"]
     environment:
+      TZ: ${TZ:-America/Chicago}
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
       GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_DEFAULT_INSTANCE_TIMEZONE: ${TZ:-America/Chicago}
       GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_UID: tempsensor-live
 
 volumes:

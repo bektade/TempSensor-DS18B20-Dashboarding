@@ -36,13 +36,27 @@ cp .env.example .env
 nano .env
 ```
 
-### 4. Start the stack
+### 4. Timezone (Chicago / CDT)
+
+If timestamps look 5 hours ahead (UTC instead of local), set the Pi and stack to Chicago time:
+
+```bash
+sudo ./scripts/setup_timezone.sh
+```
+
+Add `TZ=America/Chicago` to `.env` if it is not there, then:
+
+```bash
+docker compose up -d --force-recreate mqtt-publisher grafana
+```
+
+### 5. Start the stack
 
 ```bash
 docker compose up -d --build
 ```
 
-### 5. Open Grafana
+### 6. Open Grafana
 
 http://localhost:3000 → login from `.env` → **Dashboards → TempSensor → TempSensor Live**
 
@@ -79,6 +93,7 @@ TempSensor/
 | `MQTT_TOPIC` | Default `tempsensor/readings` |
 | `SAMPLE_INTERVAL` | Seconds between reads (default `1`) |
 | `CSV_PATH` | Default `exports/mqtt_readings.csv` |
+| `TZ` | Default `America/Chicago` (CSV + Grafana local time) |
 
 ---
 
@@ -123,6 +138,7 @@ The stack keeps running; new readings are written to Influx and appended to the 
 | `scripts/install-docker.sh` | Install Docker on Pi (`sudo`) |
 | `scripts/check_pipeline.sh` | Test MQTT, CSV, Influx |
 | `scripts/clean_influx_data.sh` | Erase InfluxDB data; keep CSV |
+| `scripts/setup_timezone.sh` | Pi NTP + `America/Chicago` (sudo) |
 | `scripts/firstTimeSetup.sh` | Optional host Python venv |
 
 ---
