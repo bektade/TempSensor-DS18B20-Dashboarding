@@ -1,62 +1,71 @@
-# TempSensor — Grafana live stack (Raspberry Pi)
+# TempSensor — Grafana live stack
+
+Real-time **DS18B20** temperatures on a Raspberry Pi: **MQTT → InfluxDB → Grafana**, with every reading also saved to CSV.
 
 ```
 DS18B20  →  mqtt-publisher  →  MQTT  →  Telegraf  →  InfluxDB  →  Grafana
                     └→  exports/mqtt_readings.csv
 ```
 
-```bash
-cd ~/Projects/TempSensor
-cp .env.example .env && nano .env
-docker compose up -d --build
-```
+**License:** [MIT](LICENSE) — free to use, modify, and share with attribution.
 
-Grafana: http://localhost:3000 → **TempSensor → TempSensor Live**
-
-**Add more DS18B20 sensors:** see [docs/ADDING_SENSORS.md](docs/ADDING_SENSORS.md)
+**Author:** [Bek Kobro](https://bekcsys.com/about) — Automation Engineer
 
 ---
 
-## Project layout
+## Run
+
+From the project root: `cd ~/Projects/TempSensor`
+
+### 1. Check 1-Wire
+
+```bash
+ls /sys/bus/w1/devices/28-*
+```
+
+If empty: enable 1-Wire in `sudo raspi-config`, reboot — see [docs/ADDING_SENSORS.md](docs/ADDING_SENSORS.md).
+
+### 2. Configure sensors
+
+Edit `publisher/sensor/ds18b20_reader.py` — set `SENSOR_MAP`.
+
+### 3. Secrets
+
+```bash
+cp .env.example .env
+nano .env
+```
+
+### 4. Start the stack
+
+```bash
+docker compose up -d --build
+```
+
+### 5. Open Grafana
+
+http://localhost:3000 → login from `.env` → **Dashboards → TempSensor → TempSensor Live**
+
+```bash
+tail -f exports/mqtt_readings.csv
+docker compose logs mqtt-publisher --tail 5
+```
+
+---
+
+## Project structure
 
 ```
 TempSensor/
 ├── README.md
+├── LICENSE
+├── AUTHORS.md
 ├── docker-compose.yml
-├── requirements.txt
-├── .env.example
-├── docker/
-│   └── mqtt-publisher.Dockerfile
-├── publisher/                 # Python: sensors + MQTT + CSV
-│   ├── sensor/ds18b20_reader.py
-│   ├── mqtt_publisher.py
-│   └── mqtt_csv_logger.py
-├── stack/                     # Mosquitto, Telegraf, Grafana config
-│   ├── mosquitto/config/
-│   ├── telegraf/
-│   └── grafana/
+├── publisher/              # sensor read + MQTT + CSV
+├── stack/                  # Mosquitto, Telegraf, Grafana
 ├── scripts/
-│   ├── install-docker.sh
-│   ├── firstTimeSetup.sh
-│   ├── activate_venv.sh
-│   ├── check_pipeline.sh
-│   └── grafana-entrypoint.sh
-├── docs/
-│   └── ADDING_SENSORS.md      # how to add more DS18B20s
-└── exports/                   # CSV logs (gitignored)
-```
-
----
-
-## Quick start
-
-```bash
-cd ~/Projects/TempSensor
-ls /sys/bus/w1/devices/28-*          # enable 1-Wire if empty
-nano publisher/sensor/ds18b20_reader.py   # SENSOR_MAP — see docs/ADDING_SENSORS.md
-cp .env.example .env && nano .env
-docker compose up -d --build
-tail -f exports/mqtt_readings.csv
+├── docs/ADDING_SENSORS.md
+└── exports/                # mqtt_readings.csv (gitignored)
 ```
 
 ---
@@ -75,22 +84,17 @@ tail -f exports/mqtt_readings.csv
 
 ## CSV log
 
-Every MQTT reading is appended to `exports/mqtt_readings.csv`:
+Every MQTT message is also written to `exports/mqtt_readings.csv`:
 
-`timestamp`, `sensor_id`, `sensor_label`, `temperature_c`, `temperature_f` (1 decimal)
-
-```bash
-tail -f exports/mqtt_readings.csv
-mv exports/mqtt_readings.csv exports/backup.csv && docker compose restart mqtt-publisher
-```
+`timestamp`, `sensor_id`, `sensor_label`, `temperature_c`, `temperature_f`
 
 ---
 
 ## Grafana dashboard
 
-- Auto-created from `stack/grafana/dashboards/tempsensor-live.template.json`
-- Edit in UI → **Save** (stored in Docker volume `grafana_data`)
-- Reset to template: `docker compose down -v && docker compose up -d --build`
+- Auto-built from `stack/grafana/dashboards/tempsensor-live.template.json`
+- Customize in the UI → **Save dashboard** (stored in `grafana_data` volume)
+- Reset layout: `docker compose down -v && docker compose up -d --build`
 
 ---
 
@@ -98,37 +102,26 @@ mv exports/mqtt_readings.csv exports/backup.csv && docker compose restart mqtt-p
 
 | Script | Use |
 |--------|-----|
-| `scripts/install-docker.sh` | First-time Docker on Pi (`sudo`) |
-| `scripts/firstTimeSetup.sh` | Host Python venv (optional) |
-| `scripts/activate_venv.sh` | Activate venv |
+| `scripts/install-docker.sh` | Install Docker on Pi (`sudo`) |
 | `scripts/check_pipeline.sh` | Test MQTT, CSV, Influx |
-
-Host publisher (optional):
-
-```bash
-scripts/firstTimeSetup.sh
-source scripts/activate_venv.sh
-MQTT_HOST=localhost python3 publisher/mqtt_publisher.py
-```
+| `scripts/firstTimeSetup.sh` | Optional host Python venv |
 
 ---
 
-## Verify
+## Documentation
 
-```bash
-docker compose ps
-docker compose logs mqtt-publisher --tail 5
-scripts/check_pipeline.sh
-```
+| Guide | Contents |
+|-------|----------|
+| [docs/ADDING_SENSORS.md](docs/ADDING_SENSORS.md) | Add DS18B20 sensors |
+| [AUTHORS.md](AUTHORS.md) | Author information |
 
 ---
 
-## Stop
+## License
 
-```bash
-docker compose down
-docker compose down -v    # wipes Influx + Grafana data (keeps host exports/)
-```
+Released under the [MIT License](LICENSE). You may use, copy, modify, and distribute this software for any purpose, including commercial use, provided the copyright notice and license text are included.
+
+Copyright (c) 2026 [Bek Kobro](https://bekcsys.com/about).
 
 ---
 
