@@ -24,7 +24,6 @@ GrafanaDashboard/grafana/provisioning/datasources/*.local.yml
 # Sensor data (generated at runtime)
 ETL/Extract/*.csv
 ETL/Extract/archive/
-ETL/Transform/coalesced*.csv
 ETL/Transform/archive/
 
 # Docker / MQTT local persistence (if created under project tree)
