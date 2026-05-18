@@ -1,0 +1,51 @@
+[agent]
+  omit_hostname = true
+  interval = "1s"
+  round_interval = true
+  metric_batch_size = 100
+  metric_buffer_limit = 10000
+  flush_interval = "1s"
+  precision = "1s"
+  debug = true
+  quiet = false
+
+[[outputs.influxdb_v2]]
+  urls = ["http://influxdb:8086"]
+  token = "INFLUXDB_ADMIN_TOKEN_PLACEHOLDER"
+  organization = "INFLUXDB_ORG_PLACEHOLDER"
+  bucket = "INFLUXDB_BUCKET_PLACEHOLDER"
+  timeout = "10s"
+
+[[outputs.file]]
+  files = ["stdout"]
+  data_format = "influx"
+
+[[inputs.mqtt_consumer]]
+  servers = ["tcp://mosquitto:1883"]
+  topics = ["tempsensor/readings"]
+  qos = 0
+  client_id = "telegraf-tempsensor"
+  connection_timeout = "30s"
+  persistent_session = false
+  data_format = "json_v2"
+
+  [[inputs.mqtt_consumer.json_v2]]
+    measurement_name = "sensor_reading"
+    timestamp_path = "timestamp"
+    timestamp_format = "unix"
+
+    [[inputs.mqtt_consumer.json_v2.tag]]
+      path = "sensor_id"
+      type = "string"
+
+    [[inputs.mqtt_consumer.json_v2.tag]]
+      path = "sensor_label"
+      type = "string"
+
+    [[inputs.mqtt_consumer.json_v2.field]]
+      path = "temperature_c"
+      type = "float"
+
+    [[inputs.mqtt_consumer.json_v2.field]]
+      path = "temperature_f"
+      type = "float"
