@@ -11,7 +11,7 @@ fi
 
 set -a
 # shellcheck source=/dev/null
-source .env
+source <(tr -d '\r' < .env)
 set +a
 
 echo "=== Containers ==="

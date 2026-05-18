@@ -90,6 +90,24 @@ Every MQTT message is also written to `exports/mqtt_readings.csv`:
 
 ---
 
+## Clean database (keep CSV)
+
+To wipe InfluxDB so Grafana starts fresh **without** deleting the CSV archive:
+
+```bash
+./scripts/clean_influx_data.sh
+```
+
+Confirm with `y`, or pass `-y` to skip the prompt. Optional: delete only Telegraf’s measurement:
+
+```bash
+./scripts/clean_influx_data.sh -y --measurement sensor_reading
+```
+
+The stack keeps running; new readings are written to Influx and appended to the CSV as usual.
+
+---
+
 ## Grafana dashboard
 
 - Auto-built from `stack/grafana/dashboards/tempsensor-live.template.json`
@@ -104,6 +122,7 @@ Every MQTT message is also written to `exports/mqtt_readings.csv`:
 |--------|-----|
 | `scripts/install-docker.sh` | Install Docker on Pi (`sudo`) |
 | `scripts/check_pipeline.sh` | Test MQTT, CSV, Influx |
+| `scripts/clean_influx_data.sh` | Erase InfluxDB data; keep CSV |
 | `scripts/firstTimeSetup.sh` | Optional host Python venv |
 
 ---
