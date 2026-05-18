@@ -1,4 +1,4 @@
-# TempSensor Logger
+# DS18B20 TempSensor Logger
 
 This project reads DS18B20 temperature sensors on a Raspberry Pi and logs readings to separate CSV files for each sensor.
 
