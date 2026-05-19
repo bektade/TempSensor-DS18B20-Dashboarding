@@ -1,4 +1,4 @@
-# TempSensor Data Logging and Visualization ( MQTT + Grafana )
+# TempSensor Logging and Visualization ( MQTT + Grafana )
 
 Real-time **DS18B20** temperatures on a Raspberry Pi: **MQTT → InfluxDB → Grafana**, with every reading also saved to CSV.
 
