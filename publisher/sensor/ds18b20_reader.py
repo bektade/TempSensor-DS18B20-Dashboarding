@@ -3,11 +3,11 @@ import time
 from datetime import datetime
 
 BASE_DIR = '/sys/bus/w1/devices/'
-SAMPLE_INTERVAL = 1
+SAMPLE_INTERVAL = 60
 
 SENSOR_MAP = {
     '28-0000004a6df4': 'Sensor1',
-    # '28-000000000000': 'Sensor2',
+    '28-00000048c1df': 'Sensor2',
 }
 
 if os.getenv('SKIP_W1_MODPROBE', '').lower() not in ('1', 'true', 'yes'):
