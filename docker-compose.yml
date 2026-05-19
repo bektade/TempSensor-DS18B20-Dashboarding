@@ -66,6 +66,7 @@ services:
       dockerfile: docker/mqtt-publisher.Dockerfile
     container_name: tempsensor-mqtt-publisher
     restart: unless-stopped
+    stop_grace_period: 90s
     env_file: .env
     environment:
       TZ: ${TZ:-America/Chicago}
@@ -77,6 +78,7 @@ services:
     volumes:
       - /sys/bus/w1/devices:/sys/bus/w1/devices:ro
       - ./exports:/app/exports
+      - ./Visualize/output:/app/Visualize/output
 
   grafana:
     image: grafana/grafana:11.4.0

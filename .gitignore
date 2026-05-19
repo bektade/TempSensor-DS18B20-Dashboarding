@@ -18,6 +18,8 @@ stack/grafana/provisioning/datasources/influxdb.yml
 # Data outputs
 exports/
 *.csv
+Visualize/output/
+
 
 # Optional Grafana UI exports
 TempSensor Live-*.json
