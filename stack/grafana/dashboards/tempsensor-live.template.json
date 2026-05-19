@@ -52,7 +52,38 @@
           },
           "unit": "fahrenheit"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "Sensor1"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#2563EB",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "Sensor2"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#E67E22",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 3,
@@ -60,7 +91,7 @@
         "x": 1,
         "y": 0
       },
-      "id": 2,
+      "id": 1,
       "options": {
         "colorMode": "value",
         "graphMode": "none",
@@ -96,8 +127,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "dark-red",
-            "mode": "fixed"
+            "mode": "palette-classic"
           },
           "custom": {
             "axisBorderShow": true,
@@ -106,10 +136,10 @@
             "axisGridShow": true,
             "axisLabel": "Temperature (°F)",
             "axisPlacement": "left",
-            "barAlignment": 0,
+            "barAlignment": 1,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 40,
+            "fillOpacity": 100,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
@@ -117,9 +147,12 @@
               "viz": false
             },
             "insertNulls": false,
-            "lineInterpolation": "stepAfter",
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
             "lineWidth": 2,
-            "pointSize": 4,
+            "pointSize": 18,
             "scaleDistribution": {
               "type": "linear"
             },
@@ -156,12 +189,38 @@
           {
             "matcher": {
               "id": "byRegexp",
-              "options": "/.*/"
+              "options": "Sensor1"
             },
             "properties": [
               {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-yellow",
+                  "mode": "shades"
+                }
+              },
+              {
                 "id": "displayName",
-                "value": "${__field.labels.sensor_label}"
+                "value": "Sensor1"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "Sensor2"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-purple",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "displayName",
+                "value": "Sensor2"
               }
             ]
           }
@@ -173,7 +232,7 @@
         "x": 3,
         "y": 0
       },
-      "id": 4,
+      "id": 2,
       "options": {
         "legend": {
           "calcs": [
@@ -183,7 +242,7 @@
             "max",
             "mean"
           ],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
@@ -233,7 +292,38 @@
           },
           "unit": "celsius"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "Sensor1"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#2563EB",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "Sensor2"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#E67E22",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 3,
@@ -241,7 +331,7 @@
         "x": 1,
         "y": 3
       },
-      "id": 1,
+      "id": 3,
       "options": {
         "colorMode": "value",
         "graphMode": "none",
@@ -277,8 +367,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "dark-red",
-            "mode": "fixed"
+            "mode": "palette-classic"
           },
           "custom": {
             "axisBorderShow": true,
@@ -287,10 +376,10 @@
             "axisGridShow": true,
             "axisLabel": "Temperature (°C)",
             "axisPlacement": "left",
-            "barAlignment": 0,
+            "barAlignment": -1,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 40,
+            "fillOpacity": 95,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
@@ -298,12 +387,12 @@
               "viz": false
             },
             "insertNulls": false,
-            "lineInterpolation": "stepAfter",
+            "lineInterpolation": "linear",
             "lineStyle": {
               "fill": "solid"
             },
-            "lineWidth": 2,
-            "pointSize": 4,
+            "lineWidth": 3,
+            "pointSize": 16,
             "scaleDistribution": {
               "type": "linear"
             },
@@ -340,12 +429,38 @@
           {
             "matcher": {
               "id": "byRegexp",
-              "options": "/.*/"
+              "options": "Sensor1"
             },
             "properties": [
               {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-orange",
+                  "mode": "fixed"
+                }
+              },
+              {
                 "id": "displayName",
-                "value": "${__field.labels.sensor_label}"
+                "value": "Sensor1"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "Sensor2"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-purple",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "displayName",
+                "value": "Sensor2"
               }
             ]
           }
@@ -357,7 +472,7 @@
         "x": 3,
         "y": 13
       },
-      "id": 3,
+      "id": 4,
       "options": {
         "legend": {
           "calcs": [
@@ -367,7 +482,7 @@
             "max",
             "mean"
           ],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
@@ -388,7 +503,7 @@
     }
   ],
   "preload": false,
-  "refresh": "5s",
+  "refresh": "1m",
   "schemaVersion": 40,
   "tags": [
     "tempsensor",
@@ -400,10 +515,12 @@
       {
         "current": {
           "text": [
-            "Sensor1"
+            "Sensor1",
+            "Sensor2"
           ],
           "value": [
-            "Sensor1"
+            "Sensor1",
+            "Sensor2"
           ]
         },
         "datasource": {
@@ -426,13 +543,13 @@
     ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "America/Chicago",
   "title": "TempSensor Live",
   "uid": "tempsensor-live",
-  "version": 19,
+  "version": 30,
   "weekStart": ""
 }
