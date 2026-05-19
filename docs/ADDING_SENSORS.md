@@ -1,6 +1,6 @@
 # Adding more DS18B20 sensors
 
-This guide is for the **Grafana** branch on a **Raspberry Pi**. Each sensor gets its own 1-Wire ID, a label in software, and appears separately in MQTT, CSV, InfluxDB, and Grafana.
+This guide is for the **Grafana** branch on a **Raspberry Pi**. Each sensor gets its own 1-Wire ID, a label in software, and appears separately in MQTT, CSV, InfluxDB, and Grafana. InfluxDB setup and cleanup: [INFLUXDB.md](INFLUXDB.md).
 
 ---
 
@@ -134,7 +134,7 @@ You should see one JSON message **per sensor** per cycle, each with its own `sen
 ### CSV
 
 ```bash
-tail -f exports/mqtt_readings.csv
+tail -f exports/temp_reading_*.csv
 ```
 
 Multiple rows per timestamp (one per sensor) is normal.

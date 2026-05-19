@@ -7,10 +7,6 @@ DS18B20  →  mqtt-publisher  →  MQTT  →  Telegraf  →  InfluxDB  →  Graf
                     └→  exports/temp_reading_YYYY-MM-DD_HMMAM.csv
 ```
 
-**License:** [MIT](LICENSE) — free to use, modify, and share with attribution.
-
-**Author:** [Bek Kobro](https://bekcsys.com/about) — Automation Engineer
-
 ---
 
 ## Run
@@ -36,27 +32,15 @@ cp .env.example .env
 nano .env
 ```
 
-### 4. Timezone (Chicago / CDT)
+Timezone wrong (UTC vs Chicago)? See [docs/TIMEZONE.md](docs/TIMEZONE.md).
 
-If timestamps look 5 hours ahead (UTC instead of local), set the Pi and stack to Chicago time:
-
-```bash
-sudo ./scripts/setup_timezone.sh
-```
-
-Add `TZ=America/Chicago` to `.env` if it is not there, then:
-
-```bash
-docker compose up -d --force-recreate mqtt-publisher grafana
-```
-
-### 5. Start the stack
+### 4. Start the stack
 
 ```bash
 docker compose up -d --build
 ```
 
-### 6. Open Grafana
+### 5. Open Grafana
 
 http://localhost:3000 → login from `.env` → **Dashboards → TempSensor → TempSensor Live**
 
@@ -78,8 +62,8 @@ TempSensor/
 ├── publisher/              # sensor read + MQTT + CSV
 ├── stack/                  # Mosquitto, Telegraf, Grafana
 ├── scripts/
-├── Visualize/              # matplotlib plot from latest CSV
-├── docs/ADDING_SENSORS.md
+├── Visualize/              # Plotly PNG — see docs/CUSTOM_VISUALIZER.md
+├── docs/
 └── exports/                # active CSV + archive/ (gitignored)
 ```
 
@@ -89,12 +73,13 @@ TempSensor/
 
 | Variable | Purpose |
 |----------|---------|
-| `INFLUXDB_*` | InfluxDB setup + token |
+| `INFLUXDB_*` | InfluxDB — see [docs/INFLUXDB.md](docs/INFLUXDB.md) |
 | `GRAFANA_ADMIN_*` | Grafana login |
 | `MQTT_TOPIC` | Default `tempsensor/readings` |
 | `SAMPLE_INTERVAL` | Seconds between reads and CSV rows (default `60`, one per minute) |
 | `CSV_DIR` | Directory for per-run CSV files (default `exports`) |
-| `TZ` | Default `America/Chicago` (CSV + Grafana local time) |
+| `VISUALIZE_OUTPUT_DIR` | PNG output — see [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VISUALIZER.md) |
+| `TZ` | Default `America/Chicago` — see [docs/TIMEZONE.md](docs/TIMEZONE.md) |
 
 ---
 
@@ -105,54 +90,9 @@ Each time the publisher starts, it creates a new file under `exports/`, for exam
 
 On `docker compose up`, any CSV files in `exports/` are moved to `exports/archive/` before a new run file is created.
 
-On `docker compose down`, the latest CSV stays in `exports/`; a matching PNG is written to `Visualize/output/`.
-
 Columns: `timestamp`, `sensor_id`, `sensor_label`, `temperature_c`, `temperature_f`
 
----
-
-## Clean database (keep CSV)
-
-To wipe InfluxDB so Grafana starts fresh **without** deleting the CSV archive:
-
-```bash
-./scripts/clean_influx_data.sh
-```
-
-Confirm with `y`, or pass `-y` to skip the prompt. Optional: delete only Telegraf’s measurement:
-
-```bash
-./scripts/clean_influx_data.sh -y --measurement sensor_reading
-```
-
-The stack keeps running; new readings are written to Influx and appended to the CSV as usual.
-
----
-
-## Custom plot (PNG on `docker compose down`)
-
-When you stop the stack, the publisher **stops reading** and saves a **presentation PNG** (Plotly: shared 90‑min axis, °C and °F subplots) named like the CSV (same basename, `.png` instead of `.csv`). The CSV is **not** archived on down—only on the next `docker compose up`.
-
-**Recommended on the Pi** (plots on the host — most reliable):
-
-```bash
-./scripts/compose-down.sh
-```
-
-Or plain `docker compose down` (plots inside the mqtt-publisher container after rebuild).
-
-```bash
-# exports/temp_reading_2026-05-18_936PM.csv  (kept)
-# Visualize/output/temp_reading_2026-05-18_936PM.png
-```
-
-Grafana is unchanged; this is an extra chart for slides and reports.
-
-Manual plot (optional):
-
-```bash
-./scripts/plot_latest_csv.sh --presentation --output-auto
-```
+Presentation PNG from the latest CSV: [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VISUALIZER.md).
 
 ---
 
@@ -170,11 +110,11 @@ Manual plot (optional):
 |--------|-----|
 | `scripts/install-docker.sh` | Install Docker on Pi (`sudo`) |
 | `scripts/check_pipeline.sh` | Test MQTT, CSV, Influx |
-| `scripts/clean_influx_data.sh` | Erase InfluxDB data; keep CSV |
-| `scripts/setup_timezone.sh` | Pi NTP + `America/Chicago` (sudo) |
+| `scripts/clean_influx_data.sh` | Erase InfluxDB — see [docs/INFLUXDB.md](docs/INFLUXDB.md) |
+| `scripts/setup_timezone.sh` | Pi NTP + `America/Chicago` — see [docs/TIMEZONE.md](docs/TIMEZONE.md) |
 | `scripts/firstTimeSetup.sh` | Optional host Python venv |
-| `scripts/compose-down.sh` | Stop stack + plot latest CSV (recommended) |
-| `scripts/plot_latest_csv.sh` | Manual Plotly PNG from latest CSV |
+| `scripts/compose-down.sh` | Stop stack + plot — see [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VISUALIZER.md) |
+| `scripts/plot_latest_csv.sh` | Refresh PNG — see [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VISUALIZER.md) |
 
 ---
 
@@ -183,18 +123,21 @@ Manual plot (optional):
 | Guide | Contents |
 |-------|----------|
 | [docs/ADDING_SENSORS.md](docs/ADDING_SENSORS.md) | Add DS18B20 sensors |
+| [docs/TIMEZONE.md](docs/TIMEZONE.md) | Chicago / CDT timezone and NTP |
+| [docs/INFLUXDB.md](docs/INFLUXDB.md) | InfluxDB config, queries, cleanup |
+| [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VISUALIZER.md) | Plotly PNG charts from CSV |
 | [AUTHORS.md](AUTHORS.md) | Author information |
-
----
-
-## License
-
-Released under the [MIT License](LICENSE). You may use, copy, modify, and distribute this software for any purpose, including commercial use, provided the copyright notice and license text are included.
-
-Copyright (c) 2026 [Bek Kobro](https://bekcsys.com/about).
 
 ---
 
 ## Do not commit
 
 `.env`, `venv/`, `exports/*.csv`, `TempSensor Live-*.json`
+
+---
+
+## License and author
+
+Licensed under the [MIT License](LICENSE). You may use, copy, modify, and distribute this software for any purpose, including commercial use, provided the copyright notice and license text are included.
+
+Copyright (c) 2026 [Bek Kobro](https://bekcsys.com/about). See [AUTHORS.md](AUTHORS.md).
