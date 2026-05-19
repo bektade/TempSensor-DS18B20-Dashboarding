@@ -1,4 +1,4 @@
-# TempSensor — Grafana live stack
+# TempSensor Data Logging and Visualization ( MQTT + Grafana )
 
 Real-time **DS18B20** temperatures on a Raspberry Pi: **MQTT → InfluxDB → Grafana**, with every reading also saved to CSV.
 
@@ -9,7 +9,7 @@ DS18B20  →  mqtt-publisher  →  MQTT  →  Telegraf  →  InfluxDB  →  Graf
 
 ---
 
-## Run
+# Run
 
 From the project root: `cd ~/Projects/TempSensor`
 
@@ -51,7 +51,7 @@ docker compose logs mqtt-publisher --tail 5
 
 ---
 
-## Project structure
+# Project structure
 
 ```
 TempSensor/
@@ -69,7 +69,7 @@ TempSensor/
 
 ---
 
-## Configuration (`.env`)
+# Configuration (`.env`)
 
 | Variable | Purpose |
 |----------|---------|
@@ -83,7 +83,7 @@ TempSensor/
 
 ---
 
-## CSV log
+## Data 
 
 Each time the publisher starts, it creates a new file under `exports/`, for example
 `temp_reading_2026-05-18_936PM.csv` (9:36 PM on 18 May 2026).
@@ -96,7 +96,7 @@ Presentation PNG from the latest CSV: [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VI
 
 ---
 
-## Grafana dashboard
+# Real-time visualization : Grafana 
 
 - Auto-built from `stack/grafana/dashboards/tempsensor-live.template.json`
 - Customize in the UI → **Save dashboard** (stored in `grafana_data` volume)
@@ -104,7 +104,7 @@ Presentation PNG from the latest CSV: [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VI
 
 ---
 
-## Scripts
+# Automation Scripts
 
 | Script | Use |
 |--------|-----|
@@ -118,7 +118,7 @@ Presentation PNG from the latest CSV: [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VI
 
 ---
 
-## Documentation
+# Documentation
 
 | Guide | Contents |
 |-------|----------|
@@ -126,11 +126,11 @@ Presentation PNG from the latest CSV: [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VI
 | [docs/TIMEZONE.md](docs/TIMEZONE.md) | Chicago / CDT timezone and NTP |
 | [docs/INFLUXDB.md](docs/INFLUXDB.md) | InfluxDB config, queries, cleanup |
 | [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VISUALIZER.md) | Plotly PNG charts from CSV |
-| [AUTHORS.md](AUTHORS.md) | Author information |
+| [docs/AUTHORS.md](AUTHORS.md) | About the Author |
 
 ---
 
-## Do not commit
+#### Do not commit
 
 `.env`, `venv/`, `exports/*.csv`, `TempSensor Live-*.json`
 
