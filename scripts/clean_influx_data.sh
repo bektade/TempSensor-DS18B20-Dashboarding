@@ -9,7 +9,7 @@ usage() {
   cat <<'EOF'
 Usage: scripts/clean_influx_data.sh [options]
 
-Delete time-series data from InfluxDB. The CSV log (exports/mqtt_readings.csv) is
+Delete time-series data from InfluxDB. CSV files under exports/ are
 never touched. New readings continue to flow into Influx after cleanup.
 
 Options:
@@ -50,7 +50,7 @@ set +a
 ORG="${INFLUXDB_ORG:-tempsensor}"
 BUCKET="${INFLUXDB_BUCKET:-temperature}"
 TOKEN="${INFLUXDB_ADMIN_TOKEN:?Set INFLUXDB_ADMIN_TOKEN in .env}"
-CSV_PATH="${CSV_PATH:-exports/mqtt_readings.csv}"
+CSV_DIR="${CSV_DIR:-exports}"
 
 if ! docker compose ps --status running --services 2>/dev/null | grep -qx influxdb; then
   echo "InfluxDB container is not running. Start the stack: docker compose up -d"
@@ -64,7 +64,7 @@ if [[ -n "${MEASUREMENT}" ]]; then
 else
   echo "Scope:           all data in bucket"
 fi
-echo "CSV (unchanged): ${CSV_PATH}"
+echo "CSV dir (unchanged): ${CSV_DIR}/"
 echo ""
 
 if [[ "${YES}" != true ]]; then
@@ -90,5 +90,5 @@ fi
 
 echo "Deleting InfluxDB data..."
 docker compose exec -T influxdb influx "${DELETE_ARGS[@]}"
-echo "Done. InfluxDB is empty for the selected scope; ${CSV_PATH} was not modified."
+echo "Done. InfluxDB is empty for the selected scope; files in ${CSV_DIR}/ were not modified."
 echo "Grafana will show new data only after Telegraf writes again (refresh the dashboard)."

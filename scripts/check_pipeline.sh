@@ -27,8 +27,14 @@ timeout 3 mosquitto_sub -h localhost -t 'tempsensor/readings' -C 2 -v 2>/dev/nul
   echo "Install: sudo apt-get install -y mosquitto-clients"
 
 echo ""
-echo "=== CSV (last 3 lines) ==="
-tail -3 exports/mqtt_readings.csv 2>/dev/null || echo "(no CSV yet)"
+echo "=== CSV (latest file, last 3 lines) ==="
+LATEST_CSV="$(ls -t exports/temp_reading_*.csv 2>/dev/null | head -1 || true)"
+if [[ -n "${LATEST_CSV}" ]]; then
+  echo "${LATEST_CSV}"
+  tail -3 "${LATEST_CSV}"
+else
+  echo "(no CSV yet)"
+fi
 
 echo ""
 echo "=== InfluxDB: point count (last 10m) ==="
