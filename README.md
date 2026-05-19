@@ -2,56 +2,15 @@
 
 Real-time **DS18B20** temperatures on a Raspberry Pi: **MQTT → InfluxDB → Grafana**, with every reading also saved to CSV.
 
+### Data flow : 
 ```
 DS18B20  →  mqtt-publisher  →  MQTT  →  Telegraf  →  InfluxDB  →  Grafana
                     └→  exports/temp_reading_YYYY-MM-DD_HMMAM.csv
+
 ```
 
----
 
-# Run
-
-From the project root: `cd ~/Projects/TempSensor`
-
-### 1. Check 1-Wire
-
-```bash
-ls /sys/bus/w1/devices/28-*
-```
-
-If empty: enable 1-Wire in `sudo raspi-config`, reboot — see [docs/ADDING_SENSORS.md](docs/ADDING_SENSORS.md).
-
-### 2. Configure sensors
-
-Edit `publisher/sensor/ds18b20_reader.py` — set `SENSOR_MAP`.
-
-### 3. Secrets
-
-```bash
-cp .env.example .env
-nano .env
-```
-
-Timezone wrong (UTC vs Chicago)? See [docs/TIMEZONE.md](docs/TIMEZONE.md).
-
-### 4. Start the stack
-
-```bash
-docker compose up -d --build
-```
-
-### 5. Open Grafana
-
-http://localhost:3000 → login from `.env` → **Dashboards → TempSensor → TempSensor Live**
-
-```bash
-tail -f exports/temp_reading_*.csv
-docker compose logs mqtt-publisher --tail 5
-```
-
----
-
-# Project structure
+### Project structure
 
 ```
 TempSensor/
@@ -66,6 +25,50 @@ TempSensor/
 ├── docs/
 └── exports/                # active CSV + archive/ (gitignored)
 ```
+
+---
+
+# How to run
+
+From the project root: `cd ~/Projects/TempSensor`
+
+#### 1. Check 1-Wire
+
+```bash
+ls /sys/bus/w1/devices/28-*
+```
+
+If empty: enable 1-Wire in `sudo raspi-config`, reboot — see [docs/ADDING_SENSORS.md](docs/ADDING_SENSORS.md).
+
+#### 2. Configure sensors
+
+Edit `publisher/sensor/ds18b20_reader.py` — set `SENSOR_MAP`.
+
+#### 3. Secrets
+
+```bash
+cp .env.example .env
+nano .env
+```
+
+Timezone wrong (UTC vs Chicago)? See [docs/TIMEZONE.md](docs/TIMEZONE.md).
+
+#### 4. Start the stack
+
+```bash
+docker compose up -d --build
+```
+
+#### 5. Open Grafana
+
+http://localhost:3000 → login from `.env` → **Dashboards → TempSensor → TempSensor Live**
+
+```bash
+tail -f exports/temp_reading_*.csv
+docker compose logs mqtt-publisher --tail 5
+```
+
+
 
 ---
 
