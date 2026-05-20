@@ -9,7 +9,11 @@ DS18B20  →  mqtt-publisher  →  MQTT  →  Telegraf  →  InfluxDB  →  Graf
 
 ```
 
+![Alt text](./docs/Plot2.png)
 
+![Alt text](./docs/Plot1.png)
+
+![Alt text](./docs/data.png)
 ### Project structure
 
 ```
