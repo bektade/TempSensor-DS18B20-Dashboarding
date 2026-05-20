@@ -1,4 +1,4 @@
-# TempSensor Logging and Viz ( MQTT+Grafana )
+# SensWare : Sensor MQTT Logger and Vizualizer 
 
 Real-time **DS18B20** temperatures on a Raspberry Pi: **MQTT → InfluxDB → Grafana**, with every reading also saved to CSV.
 
