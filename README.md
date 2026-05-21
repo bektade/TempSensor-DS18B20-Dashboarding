@@ -60,7 +60,7 @@ Timezone wrong (UTC vs Chicago)? See [docs/TIMEZONE.md](docs/TIMEZONE.md).
 #### 4. Start the stack
 
 ```bash
-docker compose up -d --build
+sudo docker compose up -d --build
 ```
 
 #### 5. Open Grafana
@@ -69,7 +69,7 @@ http://localhost:3000 → login from `.env` → **Dashboards → TempSensor → 
 
 ```bash
 tail -f exports/temp_reading_*.csv
-docker compose logs mqtt-publisher --tail 5
+sudo docker compose logs mqtt-publisher --tail 5
 ```
 
 
