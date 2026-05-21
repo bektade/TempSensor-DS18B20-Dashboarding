@@ -8,8 +8,9 @@ DS18B20  →  mqtt-publisher  →  MQTT  →  Telegraf  →  InfluxDB  →  Graf
                     └→  exports/temp_reading_YYYY-MM-DD_HMMAM.csv
 
 ```
+![Alt text](./docs/Plot5.png)
 
-![Alt text](./docs/Plot2.png)
+
 
 ![Alt text](./docs/Plot1.png)
 
