@@ -1,5 +1,8 @@
 FROM python:3.12-slim-bookworm
 
+LABEL org.opencontainers.image.title="tempsensor-webapp" \
+      org.opencontainers.image.description="Product Test Data — Django + Gunicorn"
+
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 

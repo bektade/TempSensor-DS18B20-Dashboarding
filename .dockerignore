@@ -1,0 +1,13 @@
+.git
+.gitignore
+.env
+venv/
+WebApp/
+exports/
+Visualize/output/
+**/__pycache__
+*.py[cod]
+*.md
+docs/
+pgadmin/
+**/.venv

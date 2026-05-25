@@ -12,7 +12,8 @@ make startwebapp
 
 | Command | Action |
 |---------|--------|
-| `make startwebapp` | Start Postgres + Django |
+| `make startwebapp` | Start Postgres + Django (build image locally) |
+| `make startwebapp-hub` | Start Postgres + Django (pull `becktkh/tempsensor-webapp` from Docker Hub) |
 | `make import` | Import `data/import_pending/*.csv` into PostgreSQL |
 | `make migrate` | Run migrations |
 | `make stopWebApp` | Stop Postgres + Django |
@@ -41,5 +42,6 @@ Django admin: http://localhost:8000/admin/ — see [docs/DJANGO_ADMIN.md](docs/D
 | [docs/DATABASE.md](docs/DATABASE.md) | PostgreSQL access and example queries |
 | [docs/DJANGO_ADMIN.md](docs/DJANGO_ADMIN.md) | Django `/admin/` login and password reset |
 | [pgadmin/README.md](pgadmin/README.md) | pgAdmin (optional DB browser) |
+| [docs/DOCKER_HUB.md](docs/DOCKER_HUB.md) | Run on Mac/PC from Docker Hub or publish tags |
 | [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) | Host `.venv`, local `runserver`, superuser |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | Connection refused, 400 errors |

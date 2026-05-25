@@ -1,0 +1,9 @@
+# Pull pre-built mqtt-publisher (sensor collector) from Docker Hub.
+# Usage:
+#   export DOCKER_IMAGE_COLLECTOR=youruser/tempsensor-mqtt-collector
+#   docker compose -f docker-compose.yml -f docker-compose.hub.yml up -d --no-build mqtt-publisher
+
+services:
+  mqtt-publisher:
+    image: ${DOCKER_IMAGE_COLLECTOR:-becktkh/tempsensor-mqtt-collector}:${DOCKER_TAG:-latest}
+    pull_policy: always

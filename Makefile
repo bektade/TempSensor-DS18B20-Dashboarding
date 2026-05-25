@@ -10,7 +10,7 @@ else
   COMPOSE := sudo docker compose
 endif
 
-.PHONY: help env startReadSensor stopReadSensor status logs logs-grafana plot check clean-influx
+.PHONY: help env startReadSensor stopReadSensor status logs logs-grafana plot check clean-influx docker-build-collector docker-push-collector docker-publish-collector
 
 help:
 	@echo "TempSensor stack (MQTT, InfluxDB, Grafana, CSV export)"
@@ -26,7 +26,11 @@ help:
 	@echo "  make plot             Plot latest CSV to Visualize/output/ (host venv)"
 	@echo "  make check            Verify MQTT, CSV, Influx pipeline"
 	@echo "  make clean-influx     Delete InfluxDB data (see docs/INFLUXDB.md)"
+	@echo "  make docker-build-collector    Build mqtt-collector image"
+	@echo "  make docker-push-collector     Push mqtt-collector to Docker Hub"
+	@echo "  make docker-publish-collector  Build + push collector image"
 	@echo ""
+	@echo "Docker Hub: docs/DOCKER_HUB.md"
 	@echo "Start workflow:"
 	@echo "  1. make env              (once)"
 	@echo "  2. make startReadSensor  (enter TestUnit and Serial Number)"
@@ -65,3 +69,11 @@ check:
 
 clean-influx:
 	@$(ROOT)/scripts/clean_influx_data.sh
+
+docker-build-collector:
+	@DOCKERHUB_USER=$${DOCKERHUB_USER:?Set DOCKERHUB_USER} $(ROOT)/scripts/docker-publish-collector.sh
+
+docker-push-collector:
+	@DOCKERHUB_USER=$${DOCKERHUB_USER:?Set DOCKERHUB_USER} PUSH=1 $(ROOT)/scripts/docker-publish-collector.sh --push
+
+docker-publish-collector: docker-push-collector

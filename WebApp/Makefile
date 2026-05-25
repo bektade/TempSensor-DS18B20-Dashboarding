@@ -8,26 +8,27 @@ IMPORT_PENDING := $(ROOT)/data/import_pending
 ARCHIVE_OK := $(ROOT)/data/archive/db_migrated
 ARCHIVE_FAIL := $(ROOT)/data/archive/import_failed
 
-.PHONY: help startwebapp stopWebApp migrate setup env import importcsv logs status urls resetadmin
+.PHONY: help startwebapp startwebapp-hub stopWebApp migrate setup env import importcsv logs status urls resetadmin docker-build docker-push docker-publish
+
+HUB_COMPOSE := $(COMPOSE) -f docker-compose.yml -f docker-compose.hub.yml
 
 help:
 	@echo "WebApp targets:"
 	@echo "  make setup        Create .venv + .env (host tools only)"
-	@echo "  make startwebapp  Start postgres + django (no pgAdmin)"
+	@echo "  make startwebapp      Start postgres + django (build locally)"
+	@echo "  make startwebapp-hub  Start postgres + django (pull from Docker Hub)"
 	@echo "  make stopWebApp   Stop postgres + django"
 	@echo "  make migrate      Apply Django migrations"
 	@echo "  make import       Import CSV files into PostgreSQL (see below)"
 	@echo "  make logs         Follow django_web logs"
 	@echo "  make status       Show container status"
 	@echo "  make resetadmin   Reset Django /admin/ password from .env"
+	@echo "  make docker-build     Build WebApp image locally"
+	@echo "  make docker-push      Push WebApp image to Docker Hub"
+	@echo "  make docker-publish   Build + push WebApp image"
 	@echo ""
 	@echo "pgAdmin (optional, separate stack): cd pgadmin && make start"
 	@echo "  Guide: pgadmin/README.md"
-	@echo "  make migrate      Apply Django migrations"
-	@echo "  make import       Import CSV files into PostgreSQL (see below)"
-	@echo "  make logs         Follow django_web logs"
-	@echo "  make status       Show container status"
-	@echo "  make resetadmin   Reset Django /admin/ password from .env"
 	@echo ""
 	@echo "Import CSV into database:"
 	@echo "  1. make startwebapp"
@@ -44,6 +45,7 @@ help:
 	@echo "  Details: docs/CSV_IMPORT.md"
 	@echo "  pgAdmin:      pgadmin/README.md (optional: cd pgadmin && make start)"
 	@echo "  Django admin: docs/DJANGO_ADMIN.md (make resetadmin)"
+	@echo "  Docker Hub:   docs/DOCKER_HUB.md"
 
 env:
 	@if [[ ! -f .env ]]; then cp .env.example .env && echo "Created .env from .env.example"; fi
@@ -67,6 +69,22 @@ startwebapp: env
 	@echo "Optional pgAdmin: cd pgadmin && make start  (see pgadmin/README.md)"
 	@echo ""
 	@echo "Import CSV: copy files to data/import_pending/ then run: make import"
+
+startwebapp-hub: env
+	$(HUB_COMPOSE) pull django_web
+	$(HUB_COMPOSE) up -d --no-build postgres django_web
+	@echo ""
+	@port=$${DJANGO_PUBLISH_PORT:-8000}; \
+	lan_ip=$$(hostname -I 2>/dev/null | awk '{print $$1}'); \
+	echo "WebApp running (Docker Hub image: $${DOCKER_IMAGE_WEBAPP:-becktkh/tempsensor-webapp}:$${DOCKER_TAG:-latest}):"; \
+	echo "  On this Pi:    http://localhost:$$port/"; \
+	if [[ -n "$$lan_ip" ]]; then \
+	  echo "  From LAN/PC:   http://$$lan_ip:$$port/"; \
+	fi; \
+	echo "  Admin:         http://localhost:$$port/admin/"
+	@echo ""
+	@echo "Optional pgAdmin: cd pgadmin && make start"
+	@echo "Guide: docs/DOCKER_HUB.md"
 
 stopWebApp:
 	$(COMPOSE) down
@@ -121,6 +139,14 @@ status:
 
 resetadmin: env
 	@./scripts/reset_django_admin.sh
+
+docker-build:
+	@DOCKERHUB_USER=$${DOCKERHUB_USER:?Set DOCKERHUB_USER} ./scripts/docker-publish.sh
+
+docker-push:
+	@DOCKERHUB_USER=$${DOCKERHUB_USER:?Set DOCKERHUB_USER} PUSH=1 ./scripts/docker-publish.sh --push
+
+docker-publish: docker-push
 
 urls:
 	@port=$${DJANGO_PUBLISH_PORT:-8000}; \

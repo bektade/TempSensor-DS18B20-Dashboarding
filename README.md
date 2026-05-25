@@ -23,7 +23,9 @@ TempSensor/
 ├── Makefile              # make startReadSensor / make stopReadSensor
 ├── LICENSE
 ├── AUTHORS.md
+├── collector/              # MQTT sensor collector Docker image
 ├── docker-compose.yml
+├── docker-compose.hub.yml  # pull pre-built collector from Docker Hub
 ├── publisher/              # sensor read + MQTT + CSV
 ├── stack/                  # Mosquitto, Telegraf, Grafana
 ├── scripts/
@@ -153,6 +155,7 @@ Presentation PNG from the latest CSV: [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VI
 | [docs/TIMEZONE.md](docs/TIMEZONE.md) | Chicago / CDT timezone and NTP |
 | [docs/INFLUXDB.md](docs/INFLUXDB.md) | InfluxDB config, queries, cleanup |
 | [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VISUALIZER.md) | Plotly PNG charts from CSV |
+| [docs/DOCKER_HUB.md](docs/DOCKER_HUB.md) | Publish/pull WebApp and MQTT collector images |
 | [WebApp/README.md](WebApp/README.md) | Product test DB — `cd WebApp && make startwebapp` |
 | [docs/AUTHORS.md](AUTHORS.md) | About the Author |
 

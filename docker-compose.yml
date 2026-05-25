@@ -63,7 +63,7 @@ services:
   mqtt-publisher:
     build:
       context: .
-      dockerfile: docker/mqtt-publisher.Dockerfile
+      dockerfile: collector/Dockerfile
     container_name: tempsensor-mqtt-publisher
     restart: unless-stopped
     stop_grace_period: 90s
