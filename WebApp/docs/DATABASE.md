@@ -49,6 +49,17 @@ ORDER BY started_at DESC;
 
 Reference schema: [sql/postgresql_schema.sql](../sql/postgresql_schema.sql)
 
+## Backup and restore
+
+Hub image rebuilds keep the database. A **new machine** or `docker compose down -v` does not.
+
+```bash
+make db-backup
+make db-restore FILE=data/backups/sauna_tests_YYYYMMDD_HHMMSS.sql.gz
+```
+
+Full guide: **[DATABASE_BACKUP.md](DATABASE_BACKUP.md)**
+
 ## Web UI
 
 - Dashboard — counts and latest tests
