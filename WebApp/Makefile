@@ -7,8 +7,9 @@ VENV_PY := $(ROOT)/.venv/bin/python
 IMPORT_PENDING := $(ROOT)/data/import_pending
 ARCHIVE_OK := $(ROOT)/data/archive/db_migrated
 ARCHIVE_FAIL := $(ROOT)/data/archive/import_failed
+BACKUP_DIR := $(ROOT)/data/backups
 
-.PHONY: help startwebapp startwebapp-hub stopWebApp migrate setup env import importcsv logs status urls resetadmin docker-build docker-push docker-publish
+.PHONY: help startwebapp startwebapp-hub rebuildwebapp-hub stopWebApp migrate setup env import importcsv logs status urls resetadmin docker-build docker-push docker-publish db-backup db-restore
 
 HUB_COMPOSE := $(COMPOSE) -f docker-compose.yml -f docker-compose.hub.yml
 
@@ -16,7 +17,10 @@ help:
 	@echo "WebApp targets:"
 	@echo "  make setup        Create .venv + .env (host tools only)"
 	@echo "  make startwebapp      Start postgres + django (build locally)"
-	@echo "  make startwebapp-hub  Start postgres + django (pull from Docker Hub)"
+	@echo "  make startwebapp-hub     First start from Docker Hub (postgres + django)"
+	@echo "  make rebuildwebapp-hub   Pull new image tag and restart django"
+	@echo "  make db-backup        Dump PostgreSQL to data/backups/"
+	@echo "  make db-restore       Restore from FILE=data/backups/....sql.gz"
 	@echo "  make stopWebApp   Stop postgres + django"
 	@echo "  make migrate      Apply Django migrations"
 	@echo "  make import       Import CSV files into PostgreSQL (see below)"
@@ -86,8 +90,44 @@ startwebapp-hub: env
 	@echo "Optional pgAdmin: cd pgadmin && make start"
 	@echo "Guide: docs/DOCKER_HUB.md"
 
+rebuildwebapp-hub: env
+	$(HUB_COMPOSE) pull django_web
+	$(HUB_COMPOSE) up -d --no-build --force-recreate django_web
+	@echo ""
+	@echo "Rebuilt from Docker Hub: $${DOCKER_IMAGE_WEBAPP:-becktkh/tempsensor-webapp}:$${DOCKER_TAG:-latest}"
+	@echo "  http://localhost:$${DJANGO_PUBLISH_PORT:-8000}/"
+
 stopWebApp:
 	$(COMPOSE) down
+
+db-backup: env
+	@mkdir -p "$(BACKUP_DIR)"
+	@if ! $(COMPOSE) ps --status running --services 2>/dev/null | grep -qx postgres; then \
+		echo "PostgreSQL is not running. Start first: make startwebapp or make startwebapp-hub" >&2; \
+		exit 1; \
+	fi
+	@stamp=$$(date +%Y%m%d_%H%M%S); \
+	out="$(BACKUP_DIR)/sauna_tests_$$stamp.sql.gz"; \
+	$(COMPOSE) exec -T postgres pg_dump -U $${POSTGRES_USER:-sauna_user} -d $${POSTGRES_DB:-sauna_tests} \
+		| gzip > "$$out"; \
+	echo "Backup written: $$out"
+
+db-restore: env
+	@if [[ -z "$(FILE)" ]]; then \
+		echo "Usage: make db-restore FILE=data/backups/sauna_tests_YYYYMMDD_HHMMSS.sql.gz" >&2; \
+		exit 1; \
+	fi
+	@if [[ ! -f "$(FILE)" ]]; then \
+		echo "File not found: $(FILE)" >&2; \
+		exit 1; \
+	fi
+	@if ! $(COMPOSE) ps --status running --services 2>/dev/null | grep -qx postgres; then \
+		echo "PostgreSQL is not running. Start first: make startwebapp or make startwebapp-hub" >&2; \
+		exit 1; \
+	fi
+	@echo "Restoring $(FILE) into $${POSTGRES_DB:-sauna_tests} ..."
+	@gunzip -c "$(FILE)" | $(COMPOSE) exec -T postgres psql -U $${POSTGRES_USER:-sauna_user} -d $${POSTGRES_DB:-sauna_tests} -v ON_ERROR_STOP=1
+	@echo "Restore complete."
 
 migrate: env
 	@if $(COMPOSE) ps --status running --services 2>/dev/null | grep -qx django_web; then \

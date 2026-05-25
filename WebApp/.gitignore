@@ -7,4 +7,5 @@ staticfiles/
 *.sqlite3
 data/import_pending/*.csv
 data/archive/**/*.csv
+data/backups/*.sql.gz
 data/logs/*.log

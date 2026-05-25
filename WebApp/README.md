@@ -13,7 +13,10 @@ make startwebapp
 | Command | Action |
 |---------|--------|
 | `make startwebapp` | Start Postgres + Django (build image locally) |
-| `make startwebapp-hub` | Start Postgres + Django (pull `becktkh/tempsensor-webapp` from Docker Hub) |
+| `make startwebapp-hub` | First start from Docker Hub |
+| `make rebuildwebapp-hub` | Pull new tag and restart django |
+| `make db-backup` | Dump PostgreSQL to `data/backups/` |
+| `make db-restore` | Restore from `FILE=data/backups/....sql.gz` |
 | `make import` | Import `data/import_pending/*.csv` into PostgreSQL |
 | `make migrate` | Run migrations |
 | `make stopWebApp` | Stop Postgres + Django |
@@ -40,6 +43,7 @@ Django admin: http://localhost:8000/admin/ — see [docs/DJANGO_ADMIN.md](docs/D
 |-------|----------|
 | [docs/CSV_IMPORT.md](docs/CSV_IMPORT.md) | Import CSV into the database |
 | [docs/DATABASE.md](docs/DATABASE.md) | PostgreSQL access and example queries |
+| [docs/DATABASE_BACKUP.md](docs/DATABASE_BACKUP.md) | Backup/restore when cloning or rebuilding from Docker Hub |
 | [docs/DJANGO_ADMIN.md](docs/DJANGO_ADMIN.md) | Django `/admin/` login and password reset |
 | [pgadmin/README.md](pgadmin/README.md) | pgAdmin (optional DB browser) |
 | [docs/DOCKER_HUB.md](docs/DOCKER_HUB.md) | Run on Mac/PC from Docker Hub or publish tags |
