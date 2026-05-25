@@ -70,6 +70,8 @@ services:
     env_file: .env
     environment:
       TZ: ${TZ:-America/Chicago}
+      TEST_UNIT: ${TEST_UNIT}
+      SERIAL_NUMBER: ${SERIAL_NUMBER}
       MQTT_HOST: mosquitto
       MQTT_PORT: "1883"
     depends_on:

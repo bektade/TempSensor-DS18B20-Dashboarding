@@ -12,7 +12,7 @@ archive_csv() {
 }
 
 plot_latest_csv() {
-  if ! ls /app/exports/temp_reading_*.csv >/dev/null 2>&1; then
+  if ! ls /app/exports/*.csv >/dev/null 2>&1; then
     echo 'No active CSV to plot.' >&2
     return 0
   fi
