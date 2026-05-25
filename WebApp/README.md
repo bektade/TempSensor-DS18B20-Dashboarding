@@ -1,6 +1,6 @@
 # Product Test Data
 
-PostgreSQL + Django for long-term test storage. Separate from the TempSensor MQTT / Grafana / InfluxDB stack.
+PostgreSQL + Django for long-term test storage. Part of the [TempSensor](../README.md) repo — sensor collection lives in [SensorDataCollector](../SensorDataCollector/).
 
 ## Start
 
@@ -28,7 +28,7 @@ make startwebapp
 
 **Connection refused on localhost?** You may be on a PC while the app runs on the Pi — run `make urls`. See [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md).
 
-**Import CSV:** `cp ../exports/*.csv data/import_pending/` then `make import` (requires `make startwebapp` first).
+**Import CSV:** `cp ../SensorDataCollector/exports/*.csv data/import_pending/` then `make import` (requires `make startwebapp` first).
 
 - On the Pi: http://localhost:8000/
 - From another PC on the network: `http://<pi-ip>:8000/` (e.g. `http://192.168.0.198:8000/`) — not `localhost`
@@ -47,5 +47,6 @@ Django admin: http://localhost:8000/admin/ — see [docs/DJANGO_ADMIN.md](docs/D
 | [docs/DJANGO_ADMIN.md](docs/DJANGO_ADMIN.md) | Django `/admin/` login and password reset |
 | [pgadmin/README.md](pgadmin/README.md) | pgAdmin (optional DB browser) |
 | [docs/DOCKER_HUB.md](docs/DOCKER_HUB.md) | Run on Mac/PC from Docker Hub or publish tags |
+| [docs/CI_CD.md](../docs/CI_CD.md) | GitHub Actions auto-publish to Docker Hub |
 | [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) | Host `.venv`, local `runserver`, superuser |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | Connection refused, 400 errors |

@@ -1,3 +1,5 @@
+name: tempsensor
+
 services:
   mosquitto:
     image: eclipse-mosquitto:2
@@ -63,7 +65,7 @@ services:
   mqtt-publisher:
     build:
       context: .
-      dockerfile: collector/Dockerfile
+      dockerfile: docker/Dockerfile
     container_name: tempsensor-mqtt-publisher
     restart: unless-stopped
     stop_grace_period: 90s

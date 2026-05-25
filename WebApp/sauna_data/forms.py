@@ -9,7 +9,7 @@ from sauna_data.services.csv_import import ImportMetadata
 
 class CsvImportForm(forms.Form):
     csv_file = forms.FileField(label="CSV file")
-    model_name = forms.CharField(max_length=200)
+    model_name = forms.ChoiceField(label="Model name", choices=[])
     serial_number = forms.CharField(max_length=200)
     tester_name = forms.CharField(max_length=200, required=False)
     supply_voltage = forms.DecimalField(
@@ -24,6 +24,15 @@ class CsvImportForm(forms.Form):
     )
     test_location = forms.CharField(max_length=200, required=False)
     notes = forms.CharField(widget=forms.Textarea, required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        model_names = ProductModel.objects.order_by("model_name").values_list(
+            "model_name", flat=True
+        )
+        self.fields["model_name"].choices = [("", "Select a product model")] + [
+            (name, name) for name in model_names
+        ]
 
     def to_metadata(self) -> ImportMetadata:
         cleaned = self.cleaned_data

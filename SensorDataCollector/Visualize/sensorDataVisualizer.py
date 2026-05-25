@@ -76,7 +76,7 @@ def resolve_latest_csv(export_dir: Path) -> Path:
     candidates = [path for path in export_dir.glob(CSV_GLOB) if path.is_file()]
     if not candidates:
         raise FileNotFoundError(
-            f'No CSV in {export_dir}. Start the stack: make startReadSensor (repo root)'
+            f'No CSV in {export_dir}. Start the stack: cd SensorDataCollector && make startReadSensor'
         )
     return max(candidates, key=lambda path: path.stat().st_mtime)
 

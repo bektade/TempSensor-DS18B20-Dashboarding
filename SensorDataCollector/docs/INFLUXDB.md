@@ -38,7 +38,7 @@ Telegraf and Grafana read these values from `.env` at container start.
 Start with the full stack:
 
 ```bash
-cd ~/Projects/TempSensor
+cd ~/Projects/TempSensor/SensorDataCollector
 docker compose up -d
 ```
 

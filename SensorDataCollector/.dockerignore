@@ -2,7 +2,7 @@
 .gitignore
 .env
 venv/
-WebApp/
+../WebApp/
 exports/
 Visualize/output/
 **/__pycache__

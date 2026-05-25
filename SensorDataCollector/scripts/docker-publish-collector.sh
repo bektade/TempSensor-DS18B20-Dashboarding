@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Build and push MQTT sensor collector image to Docker Hub.
-# Quick push: docker build -f collector/Dockerfile -t becktkh/tempsensor-mqtt-collector:tagname . && docker push becktkh/tempsensor-mqtt-collector:tagname
+# Quick push: docker build -f docker/Dockerfile -t becktkh/tempsensor-mqtt-collector:tagname . && docker push becktkh/tempsensor-mqtt-collector:tagname
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -12,7 +12,7 @@ IMAGE="${DOCKER_IMAGE_COLLECTOR:-${DOCKERHUB_USER}/tempsensor-mqtt-collector}"
 TAG="${DOCKER_TAG:-latest}"
 
 echo "Building ${IMAGE}:${TAG} ..."
-docker build -f collector/Dockerfile -t "${IMAGE}:${TAG}" .
+docker build -f docker/Dockerfile -t "${IMAGE}:${TAG}" .
 
 if [[ "${1:-}" == "--push" ]] || [[ "${PUSH:-}" == "1" ]]; then
   echo "Pushing ${IMAGE}:${TAG} ..."

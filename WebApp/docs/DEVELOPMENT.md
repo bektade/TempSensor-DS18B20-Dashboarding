@@ -6,7 +6,7 @@ Docker (`make startwebapp`) installs dependencies inside the `django_web` image.
 
 | Path | Purpose |
 |------|---------|
-| `TempSensor/venv/` | Main stack: MQTT publisher, Plotly visualizer |
+| `SensorDataCollector/venv/` | Collector stack: MQTT publisher, Plotly visualizer |
 | `WebApp/.venv/` | Django + psycopg2 |
 
 Do not mix them — dependency versions will conflict.

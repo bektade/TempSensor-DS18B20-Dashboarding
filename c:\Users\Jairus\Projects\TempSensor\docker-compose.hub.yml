@@ -1,7 +1,0 @@
-# Pull pre-built mqtt-publisher (sensor collector) from Docker Hub.
-# Usage: docker compose -f docker-compose.yml -f docker-compose.hub.yml up -d mqtt-publisher
-
-services:
-  mqtt-publisher:
-    image: ${DOCKER_IMAGE_COLLECTOR:-tempsensor/mqtt-collector}:${DOCKER_TAG:-latest}
-    build: !override null

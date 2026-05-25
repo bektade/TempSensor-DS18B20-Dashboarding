@@ -38,7 +38,7 @@ help:
 	@echo "  1. make startwebapp"
 	@echo "  2. Copy CSV files into:  data/import_pending/"
 	@echo "     Example:"
-	@echo "       cp ../exports/*.csv data/import_pending/"
+	@echo "       cp ../SensorDataCollector/exports/*.csv data/import_pending/"
 	@echo "  3. make import"
 	@echo ""
 	@echo "  Filename pattern (optional metadata):"
@@ -49,7 +49,7 @@ help:
 	@echo "  Details: docs/CSV_IMPORT.md"
 	@echo "  pgAdmin:      pgadmin/README.md (optional: cd pgadmin && make start)"
 	@echo "  Django admin: docs/DJANGO_ADMIN.md (make resetadmin)"
-	@echo "  Docker Hub:   docs/DOCKER_HUB.md"
+	@echo "  Docker Hub:   docs/DOCKER_HUB.md  |  CI/CD: ../docs/CI_CD.md"
 
 env:
 	@if [[ ! -f .env ]]; then cp .env.example .env && echo "Created .env from .env.example"; fi
@@ -148,7 +148,7 @@ import: env
 	if [[ "$$pending" -eq 0 ]]; then \
 		echo ""; \
 		echo "No CSV files found. Copy exports first, for example:"; \
-		echo "  cp ../exports/*.csv data/import_pending/"; \
+		echo "  cp ../SensorDataCollector/exports/*.csv data/import_pending/"; \
 		echo "Then run: make import"; \
 		exit 1; \
 	fi

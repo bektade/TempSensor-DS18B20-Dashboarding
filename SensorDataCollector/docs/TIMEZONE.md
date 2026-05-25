@@ -7,7 +7,7 @@ If timestamps look **5 hours ahead** (UTC instead of local), set the Raspberry P
 From the project root:
 
 ```bash
-cd ~/Projects/TempSensor
+cd ~/Projects/TempSensor/SensorDataCollector
 sudo ./scripts/setup_timezone.sh
 ```
 

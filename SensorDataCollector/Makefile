@@ -1,6 +1,6 @@
-# TempSensor MQTT / Grafana stack
-# Run all targets from the repo root (this Makefile's directory):
-#   cd ~/Projects/TempSensor && make <target>
+# SensorDataCollector — MQTT / Grafana stack
+# Run from this directory:
+#   cd SensorDataCollector && make <target>
 SHELL := /bin/bash
 ROOT := $(CURDIR)
 
@@ -13,7 +13,7 @@ endif
 .PHONY: help env startReadSensor stopReadSensor status logs logs-grafana plot check clean-influx docker-build-collector docker-push-collector docker-publish-collector
 
 help:
-	@echo "TempSensor stack (MQTT, InfluxDB, Grafana, CSV export)"
+	@echo "SensorDataCollector stack (MQTT, InfluxDB, Grafana, CSV export)"
 	@echo "Run from: $(ROOT)"
 	@echo "  cd $(ROOT)"
 	@echo ""
@@ -30,7 +30,7 @@ help:
 	@echo "  make docker-push-collector     Push mqtt-collector to Docker Hub"
 	@echo "  make docker-publish-collector  Build + push collector image"
 	@echo ""
-	@echo "Docker Hub: docs/DOCKER_HUB.md"
+	@echo "Docker Hub: docs/DOCKER_HUB.md  |  CI/CD: ../docs/CI_CD.md"
 	@echo "Start workflow:"
 	@echo "  1. make env              (once)"
 	@echo "  2. make startReadSensor  (enter TestUnit and Serial Number)"
@@ -39,7 +39,7 @@ help:
 	@echo "Stop workflow:"
 	@echo "  make stopReadSensor      (archives CSV on next start; writes PNG on stop)"
 	@echo ""
-	@echo "Product test database (separate):  cd WebApp && make help"
+	@echo "Product test database (separate):  cd ../WebApp && make help"
 
 env:
 	@if [[ ! -f .env ]]; then cp .env.example .env && echo "Created .env — edit secrets before make startReadSensor"; else echo ".env already exists"; fi

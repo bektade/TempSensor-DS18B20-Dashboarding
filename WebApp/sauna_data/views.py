@@ -224,7 +224,12 @@ def import_upload(request: HttpRequest) -> HttpResponse:
     return render(
         request,
         "sauna_data/import_upload.html",
-        {"import_tab": "upload", "form": form, "summary": summary},
+        {
+            "import_tab": "upload",
+            "form": form,
+            "summary": summary,
+            "has_product_models": ProductModel.objects.exists(),
+        },
     )
 
 

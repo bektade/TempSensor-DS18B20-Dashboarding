@@ -1,14 +1,14 @@
-## Docker Hub Publish — MQTT collector
+# Docker image — mqtt-collector
+
+Build context: **SensorDataCollector/** (this folder’s parent).
 
 Image: **`becktkh/tempsensor-mqtt-collector`**
 
 ## Publish
 
 ```bash
-cd ~/Projects/TempSensor
+cd SensorDataCollector
 export DOCKERHUB_USER=becktkh
 export DOCKER_TAG=tagname
 make docker-publish-collector
 ```
-
-WebApp from Hub: [../WebApp/docs/DOCKER_HUB.md](../WebApp/docs/DOCKER_HUB.md)

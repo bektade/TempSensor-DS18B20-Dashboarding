@@ -1,174 +1,40 @@
-# SensWare : Sensor MQTT Logger and Vizualizer 
+# TempSensor
 
-Real-time **DS18B20** temperatures on a Raspberry Pi: **MQTT → InfluxDB → Grafana**, with every reading also saved to CSV.
+Two independent stacks in one repo:
 
-### Data flow : 
-```
-DS18B20  →  mqtt-publisher  →  MQTT  →  Telegraf  →  InfluxDB  →  Grafana
-                    └→  exports/YYYY-MM-DD_HHMMAM_TestUnit_serialNumber.csv
-
-```
-![Alt text](./docs/Plot5.png)
-
-
-
-![Alt text](./docs/Plot1.png)
-
-![Alt text](./docs/data.png)
-### Project structure
-
-```
-TempSensor/
-├── README.md
-├── Makefile              # make startReadSensor / make stopReadSensor
-├── LICENSE
-├── AUTHORS.md
-├── collector/              # MQTT sensor collector Docker image
-├── docker-compose.yml
-├── docker-compose.hub.yml  # pull pre-built collector from Docker Hub
-├── publisher/              # sensor read + MQTT + CSV
-├── stack/                  # Mosquitto, Telegraf, Grafana
-├── scripts/
-├── Visualize/              # Plotly PNG — see docs/CUSTOM_VISUALIZER.md
-├── docs/
-├── WebApp/                 # PostgreSQL + Django long-term test DB (separate stack)
-└── exports/                # active CSV + archive/ (gitignored)
-```
+| Part | Purpose | Start |
+|------|---------|--------|
+| **[SensorDataCollector](SensorDataCollector/)** | DS18B20 → MQTT → InfluxDB → Grafana + CSV export | `cd SensorDataCollector && make startReadSensor` |
+| **[WebApp](WebApp/)** | PostgreSQL + Django — long-term product test database | `cd WebApp && make startwebapp` |
 
 ---
 
-# How to run
+## Data handoff (CSV)
 
-From the project root (directory that contains this `Makefile` and `docker-compose.yml`):
+After a sensor test run, copy exports into the WebApp import folder:
 
 ```bash
-cd ~/Projects/TempSensor
+cp SensorDataCollector/exports/*.csv WebApp/data/import_pending/
+cd WebApp && make import
 ```
 
-#### 1. Check 1-Wire
-
-```bash
-ls /sys/bus/w1/devices/28-*
-```
-
-If empty: enable 1-Wire in `sudo raspi-config`, reboot — see [docs/ADDING_SENSORS.md](docs/ADDING_SENSORS.md).
-
-#### 2. Configure sensors
-
-Edit `publisher/sensor/ds18b20_reader.py` — set `SENSOR_MAP`.
-
-#### 3. Secrets
-
-```bash
-cp .env.example .env
-nano .env
-```
-
-Timezone wrong (UTC vs Chicago)? See [docs/TIMEZONE.md](docs/TIMEZONE.md).
-
-#### 4. Start the stack
-
-From `~/Projects/TempSensor` (repo root — not `WebApp/`):
-
-```bash
-cd ~/Projects/TempSensor
-make startReadSensor
-```
-
-Prompts for **TestUnit** and **Serial Number**, then starts Docker (custom CSV name).
-
-Stop: `make stopReadSensor` — (`make help` lists all targets; uses `sudo` only if your user cannot run `docker` directly.)
-
-#### 5. Open Grafana
-
-http://localhost:3000 → login from `.env` → **Dashboards → TempSensor → TempSensor Live**
-
-```bash
-tail -f exports/*.csv
-sudo docker compose logs mqtt-publisher --tail 5
-```
-
-
+See [WebApp/docs/CSV_IMPORT.md](WebApp/docs/CSV_IMPORT.md).
 
 ---
 
-# Configuration (`.env`)
+## Documentation
 
-| Variable | Purpose |
-|----------|---------|
-| `INFLUXDB_*` | InfluxDB — see [docs/INFLUXDB.md](docs/INFLUXDB.md) |
-| `GRAFANA_ADMIN_*` | Grafana login |
-| `MQTT_TOPIC` | Default `tempsensor/readings` |
-| `SAMPLE_INTERVAL` | Seconds between reads and CSV rows (default `60`, one per minute) |
-| `TEST_UNIT` | Test unit label in CSV/PNG filename (e.g. `Pro18.1`) |
-| `SERIAL_NUMBER` | Serial number in CSV/PNG filename (e.g. `73216-0098`) |
-| `CSV_DIR` | Directory for per-run CSV files (default `exports`) |
-| `VISUALIZE_OUTPUT_DIR` | PNG output — see [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VISUALIZER.md) |
-| `TZ` | Default `America/Chicago` — see [docs/TIMEZONE.md](docs/TIMEZONE.md) |
-
----
-
-## Data 
-
-Each time the publisher starts, it creates a new file under `exports/`, for example
-`2026-05-18_936PM_Pro18.1_73216-0098.csv` (date, time, TestUnit, serial).
-
-On `docker compose up`, any CSV files in `exports/` are moved to `exports/archive/` before a new run file is created.
-
-Columns: `timestamp`, `elapsed_time_in_Min`, `Timer_in_Min`, `sensor_id`, `sensor_label`, `temperature_c`, `temperature_f` (`elapsed_time_in_Min`: 0, 1, 2, …; `Timer_in_Min` counts down from 90: 90, 89, 88, …)
-
-Presentation PNG from the latest CSV: [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VISUALIZER.md).
-
----
-
-# Real-time visualization : Grafana 
-
-- Auto-built from `stack/grafana/dashboards/tempsensor-live.template.json`
-- Customize in the UI → **Save dashboard** (stored in `grafana_data` volume)
-- Reset layout: `docker compose down -v && docker compose up -d --build`
-
----
-
-# Automation
-
-| Command / script | Use |
-|------------------|-----|
-| `make startReadSensor` | Prompt TestUnit/serial + start stack (replaces `compose-up.sh`) |
-| `make stopReadSensor` | Stop stack + plot PNG (replaces `compose-down.sh`) |
-| `make help` | List all Makefile targets |
-| `scripts/compose-up.sh` | Called by `make startReadSensor` |
-| `scripts/install-docker.sh` | Install Docker on Pi (`sudo`) |
-| `scripts/check_pipeline.sh` | Test MQTT, CSV, Influx |
-| `scripts/clean_influx_data.sh` | Erase InfluxDB — see [docs/INFLUXDB.md](docs/INFLUXDB.md) |
-| `scripts/setup_timezone.sh` | Pi NTP + `America/Chicago` — see [docs/TIMEZONE.md](docs/TIMEZONE.md) |
-| `scripts/firstTimeSetup.sh` | Optional host Python venv |
-| `scripts/compose-down.sh` | Called by `make stopReadSensor` — see [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VISUALIZER.md) |
-| `scripts/plot_latest_csv.sh` | Refresh PNG — see [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VISUALIZER.md) |
-
----
-
-# Documentation
-
-| Guide | Contents |
+| Guide | Location |
 |-------|----------|
-| [docs/ADDING_SENSORS.md](docs/ADDING_SENSORS.md) | Add DS18B20 sensors |
-| [docs/TIMEZONE.md](docs/TIMEZONE.md) | Chicago / CDT timezone and NTP |
-| [docs/INFLUXDB.md](docs/INFLUXDB.md) | InfluxDB config, queries, cleanup |
-| [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VISUALIZER.md) | Plotly PNG charts from CSV |
-| [docs/DOCKER_HUB.md](docs/DOCKER_HUB.md) | Publish/pull WebApp and MQTT collector images |
-| [WebApp/README.md](WebApp/README.md) | Product test DB — `cd WebApp && make startwebapp` |
-| [docs/AUTHORS.md](AUTHORS.md) | About the Author |
+| Sensor collector (Grafana, MQTT, sensors) | [SensorDataCollector/README.md](SensorDataCollector/README.md) |
+| Product test database (Django) | [WebApp/README.md](WebApp/README.md) |
+| Docker Hub images | [SensorDataCollector/docs/DOCKER_HUB.md](SensorDataCollector/docs/DOCKER_HUB.md) · [WebApp/docs/DOCKER_HUB.md](WebApp/docs/DOCKER_HUB.md) |
+| CI/CD (auto-publish images) | [docs/CI_CD.md](docs/CI_CD.md) |
 
 ---
 
-#### Do not commit
+## License
 
-`.env`, `venv/`, `exports/*.csv`, `TempSensor Live-*.json`
+Licensed under the [MIT License](LICENSE).
 
----
-
-## License and author
-
-Licensed under the [MIT License](LICENSE). You may use, copy, modify, and distribute this software for any purpose, including commercial use, provided the copyright notice and license text are included.
-
-Copyright (c) 2026 [Bek Kobro](https://bekcsys.com/about). See [AUTHORS.md](AUTHORS.md).
+Copyright (c) 2026 [Bek Kobro](https://bekcsys.com/about). See [SensorDataCollector/docs/AUTHORS.md](SensorDataCollector/docs/AUTHORS.md).

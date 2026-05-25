@@ -37,7 +37,11 @@ make stopWebApp
 
 ---
 
-## Publish new image (maintainers)
+## Publish new image
+
+**Automatic:** push changes under `WebApp/` or tag `webapp-v1.0.0` — workflow **Docker Hub — WebApp** — see [CI/CD](../../docs/CI_CD.md).
+
+**Manual:**
 
 ```bash
 cd WebApp
@@ -58,4 +62,4 @@ DOCKER_IMAGE_WEBAPP=becktkh/tempsensor-webapp
 DOCKER_TAG=latest
 ```
 
-More: [TROUBLESHOOTING.md](TROUBLESHOOTING.md) · Collector: [../docs/DOCKER_HUB.md](../docs/DOCKER_HUB.md)
+More: [TROUBLESHOOTING.md](TROUBLESHOOTING.md) · [CI/CD](../../docs/CI_CD.md) · Collector: [../../SensorDataCollector/docs/DOCKER_HUB.md](../../SensorDataCollector/docs/DOCKER_HUB.md)

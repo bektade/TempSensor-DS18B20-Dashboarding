@@ -36,7 +36,7 @@ timestamp,elapsed_time_in_Min,Timer_in_Min,sensor_id,sensor_label,temperature_c,
 ```bash
 cd WebApp
 make startwebapp
-cp ../exports/*.csv data/import_pending/
+cp ../SensorDataCollector/exports/*.csv data/import_pending/
 make import
 ```
 

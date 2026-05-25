@@ -1,5 +1,5 @@
 # MQTT / Grafana sensor data collector
-# Build context: repo root (TempSensor/)
+# Build context: SensorDataCollector/
 # Reads DS18B20 via 1-Wire, publishes JSON to MQTT, logs CSV exports.
 
 FROM python:3.13-slim-bookworm
@@ -31,7 +31,7 @@ RUN apt-get update \
 COPY publisher/sensor ./sensor
 COPY publisher/mqtt_publisher.py publisher/mqtt_csv_logger.py ./
 COPY Visualize/sensorDataVisualizer.py ./Visualize/
-COPY collector/entrypoint.sh /mqtt-publisher-entrypoint.sh
+COPY docker/entrypoint.sh /mqtt-publisher-entrypoint.sh
 RUN chmod +x /mqtt-publisher-entrypoint.sh
 
 ENV TZ=America/Chicago \

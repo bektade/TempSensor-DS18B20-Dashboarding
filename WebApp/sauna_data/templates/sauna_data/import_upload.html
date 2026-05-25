@@ -2,6 +2,9 @@
 {% block title %}Import CSV | Product Test Data{% endblock %}
 {% block import_content %}
 <h1>Import CSV</h1>
+{% if not has_product_models %}
+<p class="failed">No product models in the database yet. Add models under <a href="{% url 'product_model_list' %}">Models &amp; Orders → Models</a> or in Django <a href="/admin/sauna_data/productmodel/">admin</a>, then return here.</p>
+{% endif %}
 <div class="card">
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
