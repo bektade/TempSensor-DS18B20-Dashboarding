@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Product Test Data{% endblock %}</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; background: #f4f6f8; color: #1a1a1a; }
+    header { background: #1f3a5f; color: #fff; padding: 1rem 1.5rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 1rem; }
+    header a, .nav-dropdown-trigger { color: #fff; text-decoration: none; cursor: pointer; }
+    .nav-dropdown { position: relative; display: inline-block; }
+    .nav-dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      min-width: 10rem;
+      margin-top: 0.35rem;
+      padding: 0.35rem 0;
+      background: #fff;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 100;
+    }
+    .nav-dropdown:hover .nav-dropdown-menu,
+    .nav-dropdown:focus-within .nav-dropdown-menu { display: block; }
+    .nav-dropdown-menu a {
+      display: block;
+      padding: 0.5rem 1rem;
+      color: #1f3a5f;
+      margin: 0;
+      white-space: nowrap;
+    }
+    .nav-dropdown-menu a:hover { background: #eef2f7; }
+    main { max-width: 1100px; margin: 1.5rem auto; padding: 0 1rem; }
+    .card { background: #fff; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: .5rem; border-bottom: 1px solid #e5e7eb; }
+    .card h2 { margin-top: 0; font-size: 1.1rem; }
+    label { display: block; margin-top: .5rem; }
+    input, select, textarea { width: 100%; max-width: 420px; padding: .4rem; }
+    button { margin-top: 1rem; padding: .5rem 1rem; }
+    .success { color: #0f6b2f; }
+    .failed { color: #b42318; }
+    .breadcrumbs { font-size: 0.9rem; color: #5c6773; margin-bottom: 0.75rem; }
+    .breadcrumbs a { color: #1f3a5f; text-decoration: none; }
+    .breadcrumbs a:hover { text-decoration: underline; }
+    .breadcrumbs span[aria-hidden="true"] { margin: 0 0.35rem; }
+    .subnav-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid #d8dee6;
+    }
+    .subnav-tabs a {
+      display: inline-block;
+      padding: 0.6rem 1rem;
+      color: #1f3a5f;
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+    }
+    .subnav-tabs a:hover { background: #eef2f7; }
+    .subnav-tabs a.active {
+      font-weight: 600;
+      border-bottom-color: #1f3a5f;
+    }
+    .import-result { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb; }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <header>
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+    <a href="{% url 'test_run_list' %}">Browse Tests</a>
+    <span class="nav-dropdown">
+      <span class="nav-dropdown-trigger" tabindex="0">Models &amp; Orders</span>
+      <span class="nav-dropdown-menu">
+        <a href="{% url 'product_model_list' %}">Models</a>
+        <a href="{% url 'product_unit_list' %}">Orders</a>
+      </span>
+    </span>
+    <span class="nav-dropdown">
+      <a href="{% url 'import_upload' %}" class="nav-dropdown-trigger">Data Imports</a>
+      <span class="nav-dropdown-menu">
+        <a href="{% url 'import_upload' %}">Import CSV</a>
+        <a href="{% url 'import_pending' %}">Pending Import CSV files</a>
+        <a href="{% url 'import_recent' %}">Recent Imports</a>
+      </span>
+    </span>
+    <a href="/admin/">Django Admin</a>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

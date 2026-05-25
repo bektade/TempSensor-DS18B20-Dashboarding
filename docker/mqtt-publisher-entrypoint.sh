@@ -5,7 +5,19 @@ set -e
 
 export MPLCONFIGDIR=/tmp/matplotlib
 
-mkdir -p /app/Visualize/output
+sync_visualize_output_owner() {
+  target=/app/Visualize/output
+  ref=/app/exports
+  mkdir -p "${target}"
+  if [ -d "${ref}" ]; then
+    owner=$(stat -c '%u:%g' "${ref}" 2>/dev/null || true)
+    if [ -n "${owner}" ]; then
+      chown -R "${owner}" "${target}" 2>/dev/null || true
+    fi
+  fi
+}
+
+sync_visualize_output_owner
 
 archive_csv() {
   python -c "from mqtt_csv_logger import archive_csv_exports; paths = archive_csv_exports(); print(f'Archived {len(paths)} CSV file(s)', flush=True)"
@@ -21,6 +33,7 @@ plot_latest_csv() {
     --export-dir /app/exports \
     --presentation \
     --output-auto; then
+    sync_visualize_output_owner
     return 0
   fi
   echo 'ERROR: Visualizer failed inside container (see traceback above).' >&2

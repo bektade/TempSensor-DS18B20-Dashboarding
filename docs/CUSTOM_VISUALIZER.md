@@ -27,7 +27,7 @@ When you stop the stack, the publisher **stops reading**, builds the PNG from th
 
 ```bash
 cd ~/Projects/TempSensor
-./scripts/compose-down.sh
+make stopReadSensor
 ```
 
 Or plain `docker compose down` (plots inside the `mqtt-publisher` container after rebuild):
@@ -70,7 +70,7 @@ Rebuild the publisher, then stop the stack:
 ```bash
 cd ~/Projects/TempSensor
 docker compose up -d --build --force-recreate mqtt-publisher
-./scripts/compose-down.sh
+make stopReadSensor
 ```
 
 ### 4. Plot a specific CSV file
@@ -102,8 +102,10 @@ ls -t Visualize/output/*.png | head -1
 If `Visualize/output/` is not writable (Docker created it as root):
 
 ```bash
-sudo chown -R $USER:$USER Visualize/output
+./scripts/fix_visualize_output_permissions.sh
 ```
+
+`make stopReadSensor` and `make plot` run this automatically before plotting.
 
 ---
 
@@ -126,5 +128,5 @@ sudo chown -R $USER:$USER Visualize/output
 | Script | Use |
 |--------|-----|
 | `scripts/plot_latest_csv.sh` | Refresh PNG from latest CSV |
-| `scripts/compose-down.sh` | Stop stack + plot latest CSV |
+| `make stopReadSensor` | Stop stack + plot latest CSV |
 | `scripts/firstTimeSetup.sh` | Install host venv + dependencies |

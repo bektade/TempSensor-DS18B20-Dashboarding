@@ -14,6 +14,7 @@ echo "Stopping mqtt-publisher..."
 docker compose stop mqtt-publisher
 
 if compgen -G "exports/*.csv" > /dev/null; then
+  "${ROOT}/scripts/fix_visualize_output_permissions.sh"
   echo "Plotting latest CSV..."
   python Visualize/sensorDataVisualizer.py \
     --export-dir exports \

@@ -20,6 +20,7 @@ DS18B20  →  mqtt-publisher  →  MQTT  →  Telegraf  →  InfluxDB  →  Graf
 ```
 TempSensor/
 ├── README.md
+├── Makefile              # make startReadSensor / make stopReadSensor
 ├── LICENSE
 ├── AUTHORS.md
 ├── docker-compose.yml
@@ -28,6 +29,7 @@ TempSensor/
 ├── scripts/
 ├── Visualize/              # Plotly PNG — see docs/CUSTOM_VISUALIZER.md
 ├── docs/
+├── WebApp/                 # PostgreSQL + Django long-term test DB (separate stack)
 └── exports/                # active CSV + archive/ (gitignored)
 ```
 
@@ -35,7 +37,11 @@ TempSensor/
 
 # How to run
 
-From the project root: `cd ~/Projects/TempSensor`
+From the project root (directory that contains this `Makefile` and `docker-compose.yml`):
+
+```bash
+cd ~/Projects/TempSensor
+```
 
 #### 1. Check 1-Wire
 
@@ -60,17 +66,16 @@ Timezone wrong (UTC vs Chicago)? See [docs/TIMEZONE.md](docs/TIMEZONE.md).
 
 #### 4. Start the stack
 
-Prompts for **TestUnit** and **Serial Number**, then starts Docker (custom CSV name):
+From `~/Projects/TempSensor` (repo root — not `WebApp/`):
 
 ```bash
-./scripts/compose-up.sh
+cd ~/Projects/TempSensor
+make startReadSensor
 ```
 
-Or with sudo directly:
+Prompts for **TestUnit** and **Serial Number**, then starts Docker (custom CSV name).
 
-```bash
-sudo ./scripts/compose-up.sh
-```
+Stop: `make stopReadSensor` — (`make help` lists all targets; uses `sudo` only if your user cannot run `docker` directly.)
 
 #### 5. Open Grafana
 
@@ -122,17 +127,20 @@ Presentation PNG from the latest CSV: [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VI
 
 ---
 
-# Automation Scripts
+# Automation
 
-| Script | Use |
-|--------|-----|
-| `scripts/compose-up.sh` | Prompt TestUnit/serial + `docker compose up` |
+| Command / script | Use |
+|------------------|-----|
+| `make startReadSensor` | Prompt TestUnit/serial + start stack (replaces `compose-up.sh`) |
+| `make stopReadSensor` | Stop stack + plot PNG (replaces `compose-down.sh`) |
+| `make help` | List all Makefile targets |
+| `scripts/compose-up.sh` | Called by `make startReadSensor` |
 | `scripts/install-docker.sh` | Install Docker on Pi (`sudo`) |
 | `scripts/check_pipeline.sh` | Test MQTT, CSV, Influx |
 | `scripts/clean_influx_data.sh` | Erase InfluxDB — see [docs/INFLUXDB.md](docs/INFLUXDB.md) |
 | `scripts/setup_timezone.sh` | Pi NTP + `America/Chicago` — see [docs/TIMEZONE.md](docs/TIMEZONE.md) |
 | `scripts/firstTimeSetup.sh` | Optional host Python venv |
-| `scripts/compose-down.sh` | Stop stack + plot — see [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VISUALIZER.md) |
+| `scripts/compose-down.sh` | Called by `make stopReadSensor` — see [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VISUALIZER.md) |
 | `scripts/plot_latest_csv.sh` | Refresh PNG — see [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VISUALIZER.md) |
 
 ---
@@ -145,6 +153,7 @@ Presentation PNG from the latest CSV: [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VI
 | [docs/TIMEZONE.md](docs/TIMEZONE.md) | Chicago / CDT timezone and NTP |
 | [docs/INFLUXDB.md](docs/INFLUXDB.md) | InfluxDB config, queries, cleanup |
 | [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VISUALIZER.md) | Plotly PNG charts from CSV |
+| [WebApp/README.md](WebApp/README.md) | Product test DB — `cd WebApp && make startwebapp` |
 | [docs/AUTHORS.md](AUTHORS.md) | About the Author |
 
 ---

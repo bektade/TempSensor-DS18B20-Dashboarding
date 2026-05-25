@@ -1,0 +1,82 @@
+{% extends "sauna_data/base.html" %}
+{% block title %}Test {{ test_run.test_run_id }} | Product Test Data{% endblock %}
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% endblock %}
+{% block content %}
+<h1>TestID {{ test_run.test_run_id }}</h1>
+<div class="card">
+  <p><strong>Model:</strong> <a href="{% url 'product_model_detail' test_run.unit.model.model_id %}">{{ test_run.unit.model.model_name }}</a></p>
+  <p><strong>Serial:</strong> <a href="{% url 'product_unit_detail' test_run.unit.unit_id %}">{{ test_run.unit.serial_number }}</a></p>
+  <p><strong>Test date:</strong> {{ test_run.test_date }}</p>
+  <p><strong>Tester:</strong> {{ test_run.tester_name|default:"—" }}</p>
+  <p><strong>Supply voltage:</strong> {{ test_run.supply_voltage|default:"—" }}</p>
+  <p><strong>Amp draw (start):</strong> {{ test_run.total_amp_draw_start|default:"—" }}</p>
+  <p><strong>Run duration (min):</strong> {{ test_run.run_duration_min }}</p>
+  <p><strong>Target temp (°F):</strong> {{ target_temperature_f }}</p>
+  <p><strong>Location:</strong> {{ test_run.test_location|default:"—" }}</p>
+  <p><strong>Notes:</strong> {{ test_run.notes|default:"—" }}</p>
+</div>
+
+<div class="card">
+  <h2>Max temperature by sensor</h2>
+  <table>
+    <thead><tr><th>Sensor</th><th>Max °F</th><th>Max °C</th><th>Min to {{ target_temperature_f }}°F</th></tr></thead>
+    <tbody>
+      {% for row in max_by_sensor %}
+      <tr>
+        <td>{{ row.label }}</td>
+        <td>{{ row.max_f }}</td>
+        <td>{{ row.max_c }}</td>
+        <td>{% if row.minutes_to_target != None %}{{ row.minutes_to_target }} min{% else %}Not reached{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h2>Temperature chart (°F vs elapsed minutes)</h2>
+  <canvas id="tempChart" height="120"></canvas>
+</div>
+
+<div class="card">
+  <h2>Readings (first 500 rows)</h2>
+  <table>
+    <thead><tr><th>Time</th><th>Elapsed</th><th>Timer</th><th>Sensor</th><th>°C</th><th>°F</th></tr></thead>
+    <tbody>
+      {% for r in readings %}
+      <tr>
+        <td>{{ r.reading_time }}</td>
+        <td>{{ r.elapsed_time_min }}</td>
+        <td>{{ r.timer_remaining_min }}</td>
+        <td>{{ r.sensor.sensor_label }}</td>
+        <td>{{ r.temperature_c }}</td>
+        <td>{{ r.temperature_f }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+  const series = {{ chart_series_json|safe }};
+  const datasets = Object.keys(series).map((label, index) => ({
+    label,
+    data: series[label],
+    parsing: { xAxisKey: 'x', yAxisKey: 'y' },
+    borderWidth: 2,
+    pointRadius: 0,
+  }));
+  new Chart(document.getElementById('tempChart'), {
+    type: 'line',
+    data: { datasets },
+    options: {
+      scales: {
+        x: { type: 'linear', title: { display: true, text: 'Elapsed time (min)' } },
+        y: { title: { display: true, text: 'Temperature (°F)' } },
+      },
+    },
+  });
+</script>
+{% endblock %}

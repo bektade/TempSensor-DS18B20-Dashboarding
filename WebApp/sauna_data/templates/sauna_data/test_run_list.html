@@ -1,0 +1,30 @@
+{% extends "sauna_data/base.html" %}
+{% block title %}Browse Tests | Product Test Data{% endblock %}
+{% block content %}
+<h1>Browse Tests</h1>
+<div class="card">
+  <form method="get">
+    {{ form.as_p }}
+    <button type="submit">Filter</button>
+  </form>
+</div>
+<div class="card">
+  <table>
+    <thead><tr><th>TestID</th><th>Date</th><th>Model</th><th>Serial</th><th>Tester</th><th>Location</th></tr></thead>
+    <tbody>
+      {% for run in test_runs %}
+      <tr>
+        <td><a href="{% url 'test_run_detail' run.test_run_id %}">{{ run.test_run_id }}</a></td>
+        <td>{{ run.test_date }}</td>
+        <td><a href="{% url 'product_model_detail' run.unit.model.model_id %}">{{ run.unit.model.model_name }}</a></td>
+        <td><a href="{% url 'product_unit_detail' run.unit.unit_id %}">{{ run.unit.serial_number }}</a></td>
+        <td>{{ run.tester_name|default:"—" }}</td>
+        <td>{{ run.test_location|default:"—" }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6">No matching test runs.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

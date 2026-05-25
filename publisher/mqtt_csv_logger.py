@@ -40,7 +40,7 @@ def format_run_csv_basename(when: datetime | None = None) -> str:
     if not test_unit or test_unit == 'unknown' or not serial_number or serial_number == 'unknown':
         raise ValueError(
             'TEST_UNIT and SERIAL_NUMBER must be set before export. '
-            'Run: ./scripts/compose-up.sh'
+            'Run: make startReadSensor (from repo root)'
         )
     return f'{stamp}_{test_unit}_{serial_number}'
 

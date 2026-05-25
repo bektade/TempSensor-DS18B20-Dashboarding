@@ -76,7 +76,7 @@ def resolve_latest_csv(export_dir: Path) -> Path:
     candidates = [path for path in export_dir.glob(CSV_GLOB) if path.is_file()]
     if not candidates:
         raise FileNotFoundError(
-            f'No CSV in {export_dir}. Start the stack: ./scripts/compose-up.sh'
+            f'No CSV in {export_dir}. Start the stack: make startReadSensor (repo root)'
         )
     return max(candidates, key=lambda path: path.stat().st_mtime)
 
@@ -388,6 +388,11 @@ class SensorDataVisualizer:
 
         saved = Path(output_path)
         saved.parent.mkdir(parents=True, exist_ok=True)
+        if not os.access(saved.parent, os.W_OK):
+            raise PermissionError(
+                f'Cannot write to {saved.parent}. Run: '
+                f'scripts/fix_visualize_output_permissions.sh'
+            )
         scale = PRESENTATION_SCALE if presentation else 1
         try:
             figure.write_image(str(saved), scale=scale)

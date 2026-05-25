@@ -1,0 +1,10 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+staticfiles/
+*.sqlite3
+data/import_pending/*.csv
+data/archive/**/*.csv
+data/logs/*.log
