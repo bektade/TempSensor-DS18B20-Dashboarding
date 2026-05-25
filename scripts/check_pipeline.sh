@@ -28,7 +28,7 @@ timeout 3 mosquitto_sub -h localhost -t 'tempsensor/readings' -C 2 -v 2>/dev/nul
 
 echo ""
 echo "=== CSV (latest file, last 3 lines) ==="
-LATEST_CSV="$(ls -t exports/temp_reading_*.csv 2>/dev/null | head -1 || true)"
+LATEST_CSV="$(ls -t exports/*.csv 2>/dev/null | head -1 || true)"
 if [[ -n "${LATEST_CSV}" ]]; then
   echo "${LATEST_CSV}"
   tail -3 "${LATEST_CSV}"

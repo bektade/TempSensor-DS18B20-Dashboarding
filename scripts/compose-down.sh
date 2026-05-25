@@ -13,7 +13,7 @@ fi
 echo "Stopping mqtt-publisher..."
 docker compose stop mqtt-publisher
 
-if compgen -G "exports/temp_reading_*.csv" > /dev/null; then
+if compgen -G "exports/*.csv" > /dev/null; then
   echo "Plotting latest CSV..."
   python Visualize/sensorDataVisualizer.py \
     --export-dir exports \
