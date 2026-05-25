@@ -3,7 +3,7 @@
 A **presentation PNG** chart from the latest CSV — separate from Grafana. Uses Plotly with shared 90‑minute time axis, **Sauna Temp (°C)** and **Sauna Temp (°F)** subplots, bold labels, and grid lines.
 
 **Source:** `Visualize/sensorDataVisualizer.py`  
-**Output:** `Visualize/output/temp_reading_YYYY-MM-DD_HHMMAM.png` (same basename as the CSV, `.png` instead of `.csv`)
+**Output:** `Visualize/output/YYYY-MM-DD_HHMMAM_TestUnit_serialNumber.png` (same basename as the CSV, `.png` instead of `.csv`)
 
 Grafana is unchanged; use this chart for slides and reports.
 
@@ -52,7 +52,7 @@ Use this any time you want a **new PNG** from the latest CSV (no need to stop th
 
 ### 1. One command (recommended)
 
-Reads the newest `exports/temp_reading_*.csv`, writes a matching PNG:
+Reads the newest `exports/*.csv`, writes a matching PNG:
 
 ```bash
 cd ~/Projects/TempSensor

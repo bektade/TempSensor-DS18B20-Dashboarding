@@ -5,7 +5,7 @@ Real-time **DS18B20** temperatures on a Raspberry Pi: **MQTT → InfluxDB → Gr
 ### Data flow : 
 ```
 DS18B20  →  mqtt-publisher  →  MQTT  →  Telegraf  →  InfluxDB  →  Grafana
-                    └→  exports/temp_reading_YYYY-MM-DD_HMMAM.csv
+                    └→  exports/YYYY-MM-DD_HHMMAM_TestUnit_serialNumber.csv
 
 ```
 ![Alt text](./docs/Plot5.png)
@@ -60,8 +60,16 @@ Timezone wrong (UTC vs Chicago)? See [docs/TIMEZONE.md](docs/TIMEZONE.md).
 
 #### 4. Start the stack
 
+Prompts for **TestUnit** and **Serial Number**, then starts Docker (custom CSV name):
+
 ```bash
-sudo docker compose up -d --build
+./scripts/compose-up.sh
+```
+
+Or with sudo directly:
+
+```bash
+sudo ./scripts/compose-up.sh
 ```
 
 #### 5. Open Grafana
@@ -69,7 +77,7 @@ sudo docker compose up -d --build
 http://localhost:3000 → login from `.env` → **Dashboards → TempSensor → TempSensor Live**
 
 ```bash
-tail -f exports/temp_reading_*.csv
+tail -f exports/*.csv
 sudo docker compose logs mqtt-publisher --tail 5
 ```
 
@@ -85,6 +93,8 @@ sudo docker compose logs mqtt-publisher --tail 5
 | `GRAFANA_ADMIN_*` | Grafana login |
 | `MQTT_TOPIC` | Default `tempsensor/readings` |
 | `SAMPLE_INTERVAL` | Seconds between reads and CSV rows (default `60`, one per minute) |
+| `TEST_UNIT` | Test unit label in CSV/PNG filename (e.g. `Pro18.1`) |
+| `SERIAL_NUMBER` | Serial number in CSV/PNG filename (e.g. `73216-0098`) |
 | `CSV_DIR` | Directory for per-run CSV files (default `exports`) |
 | `VISUALIZE_OUTPUT_DIR` | PNG output — see [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VISUALIZER.md) |
 | `TZ` | Default `America/Chicago` — see [docs/TIMEZONE.md](docs/TIMEZONE.md) |
@@ -94,11 +104,11 @@ sudo docker compose logs mqtt-publisher --tail 5
 ## Data 
 
 Each time the publisher starts, it creates a new file under `exports/`, for example
-`temp_reading_2026-05-18_936PM.csv` (9:36 PM on 18 May 2026).
+`2026-05-18_936PM_Pro18.1_73216-0098.csv` (date, time, TestUnit, serial).
 
 On `docker compose up`, any CSV files in `exports/` are moved to `exports/archive/` before a new run file is created.
 
-Columns: `timestamp`, `sensor_id`, `sensor_label`, `temperature_c`, `temperature_f`
+Columns: `timestamp`, `elapsed_time_in_Min`, `Timer_in_Min`, `sensor_id`, `sensor_label`, `temperature_c`, `temperature_f` (`elapsed_time_in_Min`: 0, 1, 2, …; `Timer_in_Min` counts down from 90: 90, 89, 88, …)
 
 Presentation PNG from the latest CSV: [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VISUALIZER.md).
 
@@ -116,6 +126,7 @@ Presentation PNG from the latest CSV: [docs/CUSTOM_VISUALIZER.md](docs/CUSTOM_VI
 
 | Script | Use |
 |--------|-----|
+| `scripts/compose-up.sh` | Prompt TestUnit/serial + `docker compose up` |
 | `scripts/install-docker.sh` | Install Docker on Pi (`sudo`) |
 | `scripts/check_pipeline.sh` | Test MQTT, CSV, Influx |
 | `scripts/clean_influx_data.sh` | Erase InfluxDB — see [docs/INFLUXDB.md](docs/INFLUXDB.md) |

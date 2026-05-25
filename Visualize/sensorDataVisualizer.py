@@ -14,7 +14,7 @@ DEFAULT_EXPORT_DIR = PROJECT_ROOT / 'exports'
 DEFAULT_OUTPUT_DIR = Path(
     os.getenv('VISUALIZE_OUTPUT_DIR', PROJECT_ROOT / 'Visualize' / 'output')
 )
-CSV_GLOB = 'temp_reading_*.csv'
+CSV_GLOB = '*.csv'
 
 TIME_WINDOW_MINUTES = 90
 X_TICK_LABEL_MINUTES = (15, 30, 45, 60, 75, 90)
@@ -76,7 +76,7 @@ def resolve_latest_csv(export_dir: Path) -> Path:
     candidates = [path for path in export_dir.glob(CSV_GLOB) if path.is_file()]
     if not candidates:
         raise FileNotFoundError(
-            f'No {CSV_GLOB} in {export_dir}. Start the stack: docker compose up -d'
+            f'No CSV in {export_dir}. Start the stack: ./scripts/compose-up.sh'
         )
     return max(candidates, key=lambda path: path.stat().st_mtime)
 
