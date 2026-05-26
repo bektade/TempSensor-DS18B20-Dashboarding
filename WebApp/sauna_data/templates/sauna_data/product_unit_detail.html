@@ -37,7 +37,7 @@
     </tbody>
   </table>
   {% if test_runs %}
-  <p><a href="{% url 'test_run_list' %}?serial_number={{ unit.serial_number|urlencode }}">Browse all tests for this order</a></p>
+  <p><a href="{% url 'test_run_list' %}?search_type=serial&amp;q={{ unit.serial_number|urlencode }}">Browse all tests for this order</a></p>
   {% endif %}
 </div>
 {% endblock %}

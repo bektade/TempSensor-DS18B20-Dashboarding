@@ -32,7 +32,7 @@
         <td>{% if unit.display_wattage is not None %}{{ unit.display_wattage }} W{% else %}—{% endif %}</td>
         <td>
           {% if unit.test_count %}
-          <a href="{% url 'test_run_list' %}?serial_number={{ unit.serial_number|urlencode }}">{{ unit.test_count }}</a>
+          <a href="{% url 'test_run_list' %}?search_type=serial&amp;q={{ unit.serial_number|urlencode }}">{{ unit.test_count }}</a>
           {% else %}
           0
           {% endif %}

@@ -50,11 +50,48 @@ class CsvImportForm(forms.Form):
 
 
 class TestRunFilterForm(forms.Form):
-    model_name = forms.CharField(required=False)
-    serial_number = forms.CharField(required=False)
-    tester = forms.CharField(required=False)
-    date_from = forms.DateField(required=False, widget=forms.DateInput(attrs={"type": "date"}))
-    date_to = forms.DateField(required=False, widget=forms.DateInput(attrs={"type": "date"}))
+    search_type = forms.ChoiceField(
+        label="Search by",
+        required=False,
+        choices=[
+            ("", "All tests"),
+            ("model", "Model"),
+            ("serial", "Serial number"),
+            ("tester", "Tester"),
+            ("date", "Date range"),
+        ],
+    )
+    q = forms.CharField(required=False, label="Search")
+    model = forms.ChoiceField(required=False, label="Model", choices=[])
+    date_from = forms.DateField(
+        required=False,
+        label="From",
+        widget=forms.DateInput(attrs={"type": "date"}),
+    )
+    date_to = forms.DateField(
+        required=False,
+        label="To",
+        widget=forms.DateInput(attrs={"type": "date"}),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        model_names = ProductModel.objects.order_by("model_name").values_list(
+            "model_name", flat=True
+        )
+        self.fields["model"].choices = [("", "Any model")] + [
+            (name, name) for name in model_names
+        ]
+        if self.data:
+            data = self.data.copy()
+            if not data.get("search_type"):
+                if data.get("serial_number"):
+                    data["search_type"] = "serial"
+                    data["q"] = data.get("serial_number")
+                elif data.get("model_name"):
+                    data["search_type"] = "model"
+                    data["model"] = data.get("model_name")
+            self.data = data
 
 
 class ProductModelFilterForm(forms.Form):

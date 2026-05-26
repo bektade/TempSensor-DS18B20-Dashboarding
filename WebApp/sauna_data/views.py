@@ -65,22 +65,26 @@ def test_run_list(request: HttpRequest) -> HttpResponse:
     form = TestRunFilterForm(request.GET or None)
     queryset = TestRun.objects.select_related("unit", "unit__model").order_by("-test_date")
     if form.is_valid():
-        if form.cleaned_data.get("model_name"):
+        search_type = form.cleaned_data.get("search_type") or ""
+        if search_type == "model" and form.cleaned_data.get("model"):
+            queryset = queryset.filter(unit__model__model_name=form.cleaned_data["model"])
+        elif search_type == "serial" and form.cleaned_data.get("q"):
             queryset = queryset.filter(
-                unit__model__model_name__icontains=form.cleaned_data["model_name"]
+                unit__serial_number__icontains=form.cleaned_data["q"]
             )
-        if form.cleaned_data.get("serial_number"):
+        elif search_type == "tester" and form.cleaned_data.get("q"):
             queryset = queryset.filter(
-                unit__serial_number__icontains=form.cleaned_data["serial_number"]
+                tester_name__icontains=form.cleaned_data["q"]
             )
-        if form.cleaned_data.get("tester"):
-            queryset = queryset.filter(
-                tester_name__icontains=form.cleaned_data["tester"]
-            )
-        if form.cleaned_data.get("date_from"):
-            queryset = queryset.filter(test_date__date__gte=form.cleaned_data["date_from"])
-        if form.cleaned_data.get("date_to"):
-            queryset = queryset.filter(test_date__date__lte=form.cleaned_data["date_to"])
+        elif search_type == "date":
+            if form.cleaned_data.get("date_from"):
+                queryset = queryset.filter(
+                    test_date__date__gte=form.cleaned_data["date_from"]
+                )
+            if form.cleaned_data.get("date_to"):
+                queryset = queryset.filter(
+                    test_date__date__lte=form.cleaned_data["date_to"]
+                )
     return render(
         request,
         "sauna_data/test_run_list.html",

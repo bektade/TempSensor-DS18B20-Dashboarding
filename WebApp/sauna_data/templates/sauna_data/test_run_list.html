@@ -1,16 +1,80 @@
 {% extends "sauna_data/base.html" %}
 {% block title %}Browse Tests | Product Test Data{% endblock %}
+{% block extra_head %}
+<style>
+  .filter-form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.75rem 1.25rem; }
+  .filter-form label { display: block; font-size: 0.85rem; color: #5c6773; margin-bottom: 0.2rem; }
+  .filter-form select,
+  .filter-form input[type="text"],
+  .filter-form input[type="date"] {
+    width: auto;
+    min-width: 10rem;
+    max-width: 280px;
+    padding: 0.4rem 0.5rem;
+  }
+  .filter-form .filter-actions { display: flex; gap: 0.5rem; align-items: center; padding-bottom: 0.1rem; }
+  .filter-form button { margin-top: 0; }
+  .filter-form a.clear-link { font-size: 0.9rem; color: #1f3a5f; }
+</style>
+{% endblock %}
 {% block content %}
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="{% url 'dashboard' %}">Dashboard</a>
+  <span aria-hidden="true">/</span>
+  <span>Browse Tests</span>
+</nav>
+
 <h1>Browse Tests</h1>
+
 <div class="card">
-  <form method="get">
-    {{ form.as_p }}
-    <button type="submit">Filter</button>
+  <form method="get" class="filter-form">
+    <div>
+      <label for="id_search_type">Search by</label>
+      {{ form.search_type }}
+    </div>
+
+    {% with st=form.search_type.value|default:"" %}
+    {% if st == "model" %}
+    <div>
+      <label for="id_model">Model</label>
+      {{ form.model }}
+    </div>
+    {% elif st == "date" %}
+    <div>
+      <label for="id_date_from">From</label>
+      {{ form.date_from }}
+    </div>
+    <div>
+      <label for="id_date_to">To</label>
+      {{ form.date_to }}
+    </div>
+    {% elif st == "serial" or st == "tester" %}
+    <div>
+      <label for="id_q">Value</label>
+      {{ form.q }}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="filter-actions">
+      <button type="submit">Search</button>
+      <a class="clear-link" href="{% url 'test_run_list' %}">Clear</a>
+    </div>
   </form>
 </div>
+
 <div class="card">
   <table>
-    <thead><tr><th>TestID</th><th>Date</th><th>Model</th><th>Serial</th><th>Tester</th><th>Location</th></tr></thead>
+    <thead>
+      <tr>
+        <th>TestID</th>
+        <th>Date</th>
+        <th>Model</th>
+        <th>Serial</th>
+        <th>Tester</th>
+        <th>Location</th>
+      </tr>
+    </thead>
     <tbody>
       {% for run in test_runs %}
       <tr>
