@@ -20,14 +20,32 @@ GitHub **Actions** tab:
 
 [hub.docker.com](https://hub.docker.com) → **Account Settings → Security → New Access Token** (Read & Write).
 
-### 2. Repository secrets
+### 2. Repository secrets (required — fixes “Username and password required”)
 
-**Settings → Secrets and variables → Actions**
+In your GitHub repo  
+`https://github.com/bektade/TempSensor-DS18B20-Dashboarding`
 
-| Secret | Value |
-|--------|--------|
-| `DOCKERHUB_USERNAME` | e.g. `becktkh` |
-| `DOCKERHUB_TOKEN` | Your token |
+1. **Settings** → **Secrets and variables** → **Actions**
+2. Click **New repository secret** (not Environment secrets)
+3. Add **exactly** these names (copy/paste — spelling matters):
+
+| Name | Value |
+|------|--------|
+| `DOCKERHUB_USERNAME` | `becktkh` (your Docker Hub login, lowercase) |
+| `DOCKERHUB_TOKEN` | Paste the **access token** from step 1 — **not** your Docker Hub password |
+
+4. You should see both secrets listed under **Repository secrets**.
+
+**Common mistakes**
+
+| Wrong | Right |
+|-------|--------|
+| `DOCKER_USERNAME` | `DOCKERHUB_USERNAME` |
+| `DOCKER_TOKEN` | `DOCKERHUB_TOKEN` |
+| Account password | Access token from Docker Hub **Security** page |
+| Secrets only on a fork | Add secrets on the repo you push to (`bektade/TempSensor-...`) |
+
+Re-run the failed workflow: **Actions** → workflow → **Re-run all jobs**.
 
 ### 3. Default branch
 
@@ -143,6 +161,7 @@ cd SensorDataCollector && export DOCKERHUB_USER=becktkh DOCKER_TAG=my-tag && mak
 |---------|-----|
 | Workflow did not start | Push must be on **`djangoWebApp`** and touch that component’s folder (or run workflow manually) |
 | No `latest` tag | Only pushes to **`djangoWebApp`** get `latest`; check branch name |
+| `Username and password required` | Add `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` repository secrets (see above) |
 | `denied: requested access` | Fix `DOCKERHUB_USERNAME` / `DOCKERHUB_TOKEN` secrets |
 | Pi still old image | `DOCKER_TAG=latest` in the right `.env`, then rebuild that stack only |
 
